@@ -9,7 +9,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_mail import Mail, Message
 
 from helpers import apology, login_required, special_chars, slogify, deslogify, validate_player, send_invite, checkIfDuplicates, validate_teamhost, teamtable
-from safespace import gmail
+from safespace import gmail, email
 
 # Configure application
 app = Flask(__name__)
@@ -20,7 +20,7 @@ mail_settings = {
     "MAIL_PORT": 465,
     "MAIL_USE_TLS": False,
     "MAIL_USE_SSL": True,
-    "MAIL_USERNAME": 'charmaine211@gmail.com',
+    "MAIL_USERNAME": email(),
     "MAIL_PASSWORD": gmail()
 }
 
