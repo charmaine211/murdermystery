@@ -6,14 +6,17 @@
 
 {% block main %}
 
-    <h3><a href="/sour_grapes_of_wrath">Sour Grapes of Wrath</a></h3>
+    {% for game in games %}
+        <h4><a href="/{{ game.name|lower()|replace(' ', '-') }}">{{ game.name }}</a></h3>
 
-    <p><h6><b>The Scenario</b></h6>
+        <p><h6><b>The Scenario</b></h6>
 
-    One year ago, Robert Killingsworth bought the farm. Six months later, he was dead - leaving his widow, Elizabeth, to tend to their fledgling winery and vineyard on the outskirts of California's wine country. With mounting debts and no clue as to how to run a business, Elizabeth is desperate to sell the farm and recoup her losses. The fierce drought and shaky economy, however, have left the Killingsworth Farm on the market for far too long.
+        {{ game.description }}
 
-    One early autumn day, six people passed through the gates of Killingsworth Farm to see Elizabeth - one of them, a cold-blooded Killer...</p>
+        </p>
 
-    <p><b>Players:</b> 6 18+</p>
+        <p><b>Players:</b> {{ game.players }}</p>
+
+    {% endfor %}
 
 {% endblock %}
