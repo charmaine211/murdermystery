@@ -9,7 +9,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_mail import Mail, Message
 
 from helpers import apology, login_required, special_chars, slogify, deslogify, validate_player, send_invite, checkIfDuplicates, validate_teamhost, teamtable
-from safespace import gmail, email
+from safespace import gmail
 
 # Configure application
 app = Flask(__name__)
@@ -20,7 +20,7 @@ mail_settings = {
     "MAIL_PORT": 465,
     "MAIL_USE_TLS": False,
     "MAIL_USE_SSL": True,
-    "MAIL_USERNAME": email(),
+    "MAIL_USERNAME": 'charmaine211@gmail.com',
     "MAIL_PASSWORD": gmail()
 }
 
@@ -59,11 +59,34 @@ def index():
     return redirect("/teams")
 
 
-@app.route("/sour_grapes_of_wrath")
+@app.route("/games")
 @login_required
-def sour_grapes_of_wrath():
+def games():
 
-    return render_template("sour_grapes_of_wrath.html")
+    games = db.execute("SELECT * FROM games")
+
+    return render_template("games.html", games=games)
+
+
+@app.route("/<game>")
+@login_required
+def game(game):
+
+    user_id = session["user_id"]
+
+    name = deslogify(game)
+
+    game_info = db.execute("SELECT * FROM games WHERE name = :name", name = name)
+
+    if len(game_info) < 1:
+
+        if validate_player(user_id, game) == False:
+
+            return redirect ("/games")
+
+    characters = db.execute("SELECT name, description FROM characters WHERE game_id=:game_id", game_id=game_info["id"])
+
+    return render_template("game.html", game_info=game_info, characters=characters)
 
 
 @app.route("/teams")
@@ -92,13 +115,6 @@ def teams():
     return render_template("teams.html", valid_teams = valid_teams, team_list = team_list)
 
 
-@app.route("/games")
-@login_required
-def games():
-
-    return render_template("games.html")
-
-
 @app.route("/create-a-new-team", methods=["GET", "POST"])
 @login_required
 def create_a_new_team():
@@ -125,10 +141,16 @@ def create_a_new_team():
         # Query database for teamnames
         teamname_list = db.execute("SELECT name FROM teams")
 
+        gamename_list = db.execute("SELECT name FROM games")
+
         # Check if username is already exists.
         for row in teamname_list:
             if row["name"] == teamname_url:
                 return apology("Sorry, this teamname has already been taken. Try something else", 403)
+
+        for game in gamename_list:
+            if game["name"] == teamname_url:
+                return apology("Sorry, this teamname is not allowed. Try something else", 403)
 
         # Query over db for amount of players and game id
         game_id = db.execute("SELECT id FROM games WHERE name = :game", game = game)[0]["id"]
