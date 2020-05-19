@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Create a new team
+{% endblock %}
+
+{% block main %}
+    <form action="/create-a-new-team" method="post" onsubmit ="return create_a_new_team();">
+    <h3>Which Game?</h3>
+        <select name='games' id="dropDownId" onchange="display()" required>
+            <option value="" disabled selected hidden>Please Choose...</option>
+            <option value='sour-grapes-of-wrath'>Sour Grapes of Wrath</option>
+        </select>
+
+    <!-- Show text, depending on selected game-->
+    <div id="first"><p></p></div>
+    <div id="second" style="display: none;"><p>One early autumn day, six people passed through the gates of Killingsworth Farm to see Elizabeth - one of them, a cold-blooded Killer...
+    6 player game, 18+</p></div>
+
+    <h3>Choose a teamname</h3>
+        <div class="form-group">
+            <input class="form-control" name="teamname" placeholder="Teamname" id ="teamname" type="text" maxlength="15" autocomplete="off">
+        </div>
+        <button class="btn btn-primary" type="submit">Create a new team</button>
+    </form>
+{% endblock %}
