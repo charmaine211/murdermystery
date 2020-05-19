@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+    <form action="/register" method="post" onsubmit = "return register();">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="username" id ="username" placeholder="Username" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="email" placeholder="Email" id ="email" type="email">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="password" placeholder="Password" id ="password" type="password">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="confirmation" placeholder="Password confirmation" id ="confirmation" type="password">
+        </div>
+        <button class="btn btn-primary" type="submit">Create a new team</button>
+    </form>
+{% endblock %}

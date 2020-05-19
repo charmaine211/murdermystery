@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Teams
+{% endblock %}
+
+{% block main %}
+
+    The page of {{ teamname }}!!
+
+    {% if invite %}
+
+        <a href="/{{ teamname_url }}/invite">Invite your friends!</a>
+
+    {% else %}
+
+        <!-- Display game when everyone is invited
+        Characters assigned? Otherwise display assign list -->
+
+    {% endif %}
+
+
+{% endblock %}

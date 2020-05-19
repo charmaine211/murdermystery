@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Teams
+{% endblock %}
+
+{% block main %}
+
+    <a href="create-a-new-team">Create a new team</a>
+
+    <!-- Show all the teams in nice table -->
+    {% if valid_teams > 0 %}
+
+        User is part of {{ valid_teams }} team.
+        This is the list: {{ team_list }}
+
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,13 @@
+2 mei 2020
+Create a new team
+
+Kan de database niet bekijken. Zien hoe name genoteerd is in games. Nu krijg ik daar een foutmelding bij.
+Update: Alle letters in db nu .capitalize()
+Update: Did not work
+
+24 april 2020
+Register & login work
+Fixed Bug - JS - register: "Your password must contain at least one special character."
+
+charmaine / lei
+H@llo!23

@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block title %}
+   Teams
+{% endblock %}
+
+{% block main %}
+
+    {% if history == [] %}
+        No stocks bought yet!
+
+    {% else %}
+        <table style="width:100%" class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Stock</th>
+                    <th>Amount of stocks</th>
+                    <th>Price</th>
+                    <th>Date & time</th>
+                </tr>
+            </thead>
+        {% for row in range(rows) %}
+            <tbody>
+                <tr>
+                    <td>{{ history[row][0] }}</td>
+                    <td>{{ history[row][1] }}</td>
+                    <td>${{ history[row][2] }}</td>
+                    <td>{{ history[row][3] }}</td>
+                </tr>
+            </tbody>
+        {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

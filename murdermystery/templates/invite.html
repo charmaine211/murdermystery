@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Invite friends
+{% endblock %}
+
+{% block main %}
+
+    <form action="/{{ teamname_url }}/invite" method="post" onsubmit ="return invite();">
+
+        <h3> Invite your friends! </h3>
+
+        {% for player in range(1, players) %}
+
+            {{ "Friend " ~ player }}
+
+            <!-- Show text, depending on selected game-->
+            <div class="form-group">
+                <input class="form-control" name={{ "name" ~ player }} placeholder = {{ "Name " ~ player }} id = {{ "name" ~ player }} type="text" maxlength="15">
+            </div>
+            <div class="form-group">
+                <input class="form-control" name={{ "email" ~ player }} placeholder= {{ "Email " ~ player }}  id = {{ "email" ~ player }} type="email">
+            </div>
+
+        {% endfor %}
+
+        <button class="btn btn-primary" type="submit">Create a new team</button>
+
+    </form>
+
+{% endblock %}
