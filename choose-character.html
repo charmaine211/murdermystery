@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Invite friends
+{% endblock %}
+
+{% block main %}
+
+    <form action="/{{ teamname_url }}/choose-characters" method="post" onsubmit ="return choose_characters();">
+
+        <h3> Choose a character! </h3>
+
+        {% for character in characters %}
+            <div>
+                <h6> {{ character.name }}</h5>
+
+                <p> {{ character.description }} </p>
+
+                <select name ={{ loop.index - 1 }} id="dropDownId" required>
+                    <option value="" disabled selected hidden>Choose a friend</option
+                    {% if users[0][0].username == 'temp' %}
+                            <option value="0">No account: {{ users[0][0].email }}</option>
+                    {% else %}
+                            <option value"0">{{ users[0][0].username }} ({{ users[0][0].email }})</option>
+                    {% endif %}
+                    {% for i in range(nr_characters) %}
+                        {% if users[i][0].username == 'temp' %}
+                            <option value="{{ i }}">No account: {{ users[i][0].email }}</option>
+                        {% else %}
+                            <option value"{{ i }}">{{ users[i][0].username }} ({{ users[i][0].email }})</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        {% endfor %}
+
+        <button class="btn btn-primary" type="submit">Choose character</button>
+
+    </form>
+
+{% endblock %}
