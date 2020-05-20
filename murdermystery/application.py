@@ -91,7 +91,7 @@ def game(game):
 
     characters = db.execute("SELECT name, description FROM characters WHERE game_id=:game_id", game_id=game_info[0]["id"])
 
-    return render_template("game.html", game_info=game_info, characters=characters)
+    return render_template("game.html", game_info=game_info[0], characters=characters)
 
 
 @app.route("/teams")
