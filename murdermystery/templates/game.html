@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Game
+{% endblock %}
+
+{% block main %}
+
+    <h4>{{ game_info.name }}</h4>
+
+    <p>
+        <h5><b>The scenario</b></h5>
+
+        {{ game_info.description }}
+
+    </p>
+
+    <p>
+        <h5><b>The characters</b></h5></p>
+
+        {% for character in characters%}
+
+            <p>
+                <h6>{{ character.name }}</h6>
+
+                {{ character.description }}
+            </p>
+
+        {% endfor %}
+
+        <p>Which of these people has a secret worth killing for?
+    </p>
+
+{% endblock %}
