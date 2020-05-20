@@ -78,9 +78,13 @@ def game(game):
 
     game_info = db.execute("SELECT * FROM games WHERE name = :name", name = name)
 
-    if len(game_info) < 1:
+    if len(game_info)  == 0:
 
-        if validate_player(user_id, game) == False:
+        if validate_player(user_id, game) == True:
+
+            return redirect ("/<game>")
+
+        else:
 
             return redirect ("/games")
 
@@ -187,7 +191,7 @@ def teamname_url(teamname_url):
 
             return render_template("teampage.html", teamname = teamname, invite = send_invite(teamname_url), teamname_url=teamname_url)
 
-    return redirect("/create-a-new-team")
+    return redirect("/games")
 
 
 @app.route("/<teamname_url>/invite", methods=["GET", "POST"])
