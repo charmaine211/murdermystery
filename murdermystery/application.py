@@ -80,15 +80,16 @@ def game(game):
 
     if len(game_info)  == 0:
 
-        if validate_player(user_id, game) == True:
-
-            return redirect ("/<game>")
-
-        else:
+        # Check if it is a teamname and the user is part of this team
+        if validate_player(user_id, game) == False:
 
             return redirect ("/games")
 
-    characters = db.execute("SELECT name, description FROM characters WHERE game_id=:game_id", game_id=game_info["id"])
+        else:
+
+            return render_template("teampage.html", teamname = name, invite = send_invite(game), teamname_url=game)
+
+    characters = db.execute("SELECT name, description FROM characters WHERE game_id=:game_id", game_id=game_info[0]["id"])
 
     return render_template("game.html", game_info=game_info, characters=characters)
 
