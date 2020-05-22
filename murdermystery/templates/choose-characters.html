@@ -17,19 +17,25 @@
                 <p> {{ character.description }} </p>
 
                 <select name ={{ loop.index - 1 }} id="dropDownId" required>
+
                     <option value="" disabled selected hidden>Choose a friend</option
-                    {% if users[0][0].username == 'temp' %}
-                            <option value="0">No account: {{ users[0][0].email }}</option>
+
+                    {% if users[0].username == 'temp' %}
+                            <option value="0">No account: {{ users[0].email }}</option>
                     {% else %}
-                            <option value"0">{{ users[0][0].username }} ({{ users[0][0].email }})</option>
+                            <option value"0">{{ users[0].username }} ({{ users[0].email }})</option>
                     {% endif %}
+
                     {% for i in range(nr_characters) %}
-                        {% if users[i][0].username == 'temp' %}
-                            <option value="{{ i }}">No account: {{ users[i][0].email }}</option>
+
+                        {% if users[i].username == 'temp' %}
+                            <option value="{{ i }}">No account: {{ users[i].email }}</option>
                         {% else %}
-                            <option value"{{ i }}">{{ users[i][0].username }} ({{ users[i][0].email }})</option>
+                            <option value"{{ i }}">{{ users[i].username }} ({{ users[i].email }})</option>
                         {% endif %}
+
                     {% endfor %}
+
                 </select>
             </div>
         {% endfor %}
