@@ -184,15 +184,30 @@ def teamname_url(teamname_url):
 
     user_id = session["user_id"]
 
+    if validate_player(user_id, teamname_url) == False:
 
-    if validate_player(user_id, teamname_url) == True:
+        return redirect("/games")
 
-            # Do stuff with the information from the tables
-            teamname = deslogify(teamname_url)
+    host = validate_teamhost(user_id, teamname_url)
 
-            return render_template("teampage.html", teamname = teamname, invite = send_invite(teamname_url), teamname_url=teamname_url)
+    # Do stuff with the information from the tables
+    teamname = deslogify(teamname_url)
 
-    return redirect("/games")
+    team = []
+
+    # Query over the characters
+    team_ids = db.execute("SELECT user_id, char_id FROM :teamtable", teamtable = teamtable(teamname_url))
+
+    # Make sure the characters are assigned before it is safed in teams
+    if team_ids[0]["char_id"] != 0:
+
+        for i in range(len(team_ids)):
+
+            player = db.execute("SELECT username, email FROM users WHERE id = :user_id", user_id = team_ids[i]["user_id"])
+            player.update(db.execute("SELECT name, description FROM characters WHERE id = :char_id", char_id = team_ids[i]["char_id"]))
+            team.append(player)
+
+    return render_template("teampage.html", teamname = teamname, invite = send_invite(teamname_url), teamname_url = teamname_url, team = team, host = host)
 
 
 @app.route("/<teamname_url>/invite", methods=["GET", "POST"])
@@ -200,10 +215,6 @@ def teamname_url(teamname_url):
 def invite(teamname_url):
 
     user_id = session["user_id"]
-
-    game_id = (db.execute("SELECT game_id FROM teams WHERE name = :teamname_url", teamname_url = teamname_url))[0]["game_id"]
-
-    players = (db.execute("SELECT players FROM games WHERE id = :game_id", game_id = game_id))[0]["players"]
 
     # User reached route via GET (as by clicking a link or via redirect)
     if request.method == "GET":
@@ -215,7 +226,11 @@ def invite(teamname_url):
 
         elif send_invite(teamname_url) == False:
 
-            return redirect("/")
+            return redirect("/<teamname_url>")
+
+        game_id = (db.execute("SELECT game_id FROM teams WHERE name = :teamname_url", teamname_url = teamname_url))[0]["game_id"]
+
+        players = (db.execute("SELECT players FROM games WHERE id = :game_id", game_id = game_id))[0]["players"]
 
         return render_template("invite.html", players = players, teamname_url = teamname_url)
 
@@ -317,26 +332,43 @@ def choose_characters(teamname_url):
 
         for i in range(nr_characters):
 
-            users.append(db.execute("SELECT username, email FROM users WHERE id = :id", id = player_ids[i]["user_id"]))
+            if player_ids[i]["user_id"] == user_id:
+
+                current_user = db.execute("SELECT id, email FROM users WHERE id = :id", id = player_ids[i]["user_id"])[0]
+                current_user.update(username = 'Me')
+                users.append(current_user)
+
+            else:
+                users.append(db.execute("SELECT id, username, email FROM users WHERE id = :id", id = player_ids[i]["user_id"])[0])
 
         # Returns 2 lists with dicts containing character en user info
         return render_template("choose-characters.html", characters = characters, users = users, nr_characters = nr_characters)
 
     else:
 
-        player_list = []
+        # Create a new list to store the user indexes in the character index
+        character_userlist = []
 
-        for i in range(len(characters)):
+        # The characters are static, 0 - len(characters). So the the teamid's are placed in the index of the character.
+        for i in range(nr_characters):
 
-            player_list.append(request.form.get(str(i)))
+            character_userlist.append(request.form.get(str(i)))
 
         # Make sure the host only assigns 1 character to 1
-        if checkIfDuplicates(player_list):
+        if checkIfDuplicates(character_userlist):
 
             return apology("Players can only have 1 character", 403)
 
-        # Add the char id to the teamtable
 
+        # Add the char id to the teamtable
+        for j in range(nr_characters):
+
+            # character_userlist[j] is the users index
+            # users[character_userlist[j]]["id"]
+            # characters[j]["id"] is the character id
+
+            # Add the character index to the teamtable where user_id = characterlist[j]
+            db.execute("UPDATE :teamtable SET char_id = :char_id WHERE user_id = :user_id", {"teamtable" : teamtable(teamname_url), "char_id" : characters[j]["id"], "user_id" : users[character_userlist[j]]["id"]})
 
         # Redirect user to home page
         return redirect("/<teamname_url>")
