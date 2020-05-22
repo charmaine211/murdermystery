@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Teams
+    Teampage
 {% endblock %}
 
 {% block main %}
@@ -16,6 +16,26 @@
 
         <!-- Display game when everyone is invited
         Characters assigned? Otherwise display assign list -->
+
+        {% if team|length < 1 %}
+
+            The characters still need to be assigned!
+
+            {% if host %}
+
+                <a href="/{{ teamname_url }}/choose-characters">Assign everyone a character!</a>
+
+            {% else %}
+
+                False
+
+            {% endif %}
+
+        {% else %}
+
+            {{ team }}
+
+        {% endif %}
 
     {% endif %}
 
