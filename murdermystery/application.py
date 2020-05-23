@@ -87,7 +87,7 @@ def game(game):
 
         else:
 
-            return render_template("teampage.html", teamname = name, invite = send_invite(game), teamname_url=game)
+            return render_template("team.html", teamname = name, invite = send_invite(game), teamname_url=game)
 
     characters = db.execute("SELECT name, description FROM characters WHERE game_id=:game_id", game_id=game_info[0]["id"])
 
@@ -188,8 +188,6 @@ def teamname_url(teamname_url):
 
         return redirect("/games")
 
-    host = validate_teamhost(user_id, teamname_url)
-
     # Do stuff with the information from the tables
     teamname = deslogify(teamname_url)
 
@@ -207,7 +205,7 @@ def teamname_url(teamname_url):
             player.update(db.execute("SELECT name, description FROM characters WHERE id = :char_id", char_id = team_ids[i]["char_id"]))
             team.append(player)
 
-    return render_template("teampage.html", teamname = teamname, invite = send_invite(teamname_url), teamname_url = teamname_url, team = team, host = host)
+    return render_template("team.html", teamname = teamname, invite = send_invite(teamname_url), teamname_url = teamname_url, host = validate_teamhost(user_id, teamname_url), team = team)
 
 
 @app.route("/<teamname_url>/invite", methods=["GET", "POST"])
