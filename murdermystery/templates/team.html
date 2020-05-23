@@ -1,7 +1,9 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Teampage
+
+    {{ teamname }}
+
 {% endblock %}
 
 {% block main %}
@@ -27,7 +29,8 @@
 
             {% else %}
 
-                False
+                <!-- Host is not working -->
+                {{ host }}
 
             {% endif %}
 
