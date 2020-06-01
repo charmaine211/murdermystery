@@ -205,7 +205,7 @@ def teamname_url(teamname_url):
             player.update(db.execute("SELECT name, description FROM characters WHERE id = :char_id", char_id = team_ids[i]["char_id"]))
             team.append(player)
 
-    return render_template("team.html", teamname = teamname, invite = send_invite(teamname_url), teamname_url = teamname_url, host = validate_teamhost(user_id, teamname_url), team = team)
+    return render_template("team.html", teamname = teamname, h = True, host = validate_teamhost(user_id, teamname_url), invite = send_invite(teamname_url), teamname_url = teamname_url, team = team)
 
 
 @app.route("/<teamname_url>/invite", methods=["GET", "POST"])
