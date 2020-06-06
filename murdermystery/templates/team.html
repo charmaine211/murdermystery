@@ -25,13 +25,15 @@
 
             The characters still need to be assigned!
 
-            {% if h %}
+            {% if h is defined %}
 
                 <a href="/{{ teamname_url }}/choose-characters">Assign everyone a character!</a>
 
             {% else %}
 
                Ask your host to assign the characters.
+
+               h = {{ h }}
 
             {% endif %}
 
