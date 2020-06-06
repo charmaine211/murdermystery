@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+
+        Round {{ r }}
+
+{% endblock %}
+
+{% block main %}
+
+    {% for info in game_info %}
+
+        <p><b>Scenario</b></p>
+
+        <p>{{ info["scenario"] }}</p>
+
+        <p><b>Fact</b></p>
+
+        <p>{{ info["facts"] }}</p>
+
+        <p><b>Secret</b></p>
+
+        <p>{{ info["secrets"] }}</p>
+
+        <p><b>Clue</b></p>
+
+        <p>{{ info["clue"] }}</p>
+
+    {% endfor %}
+
+{% endblock %}
