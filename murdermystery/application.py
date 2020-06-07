@@ -1,7 +1,7 @@
 import os
 
 from cs50 import SQL
-from flask import Flask, flash, jsonify, redirect, render_template, request, session
+from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
@@ -76,9 +76,7 @@ def game(game):
 
     if validate_player(user_id, game):
 
-        teamname_url = game
-
-        return redirect("/<teamname_url>")
+        return redirect(url_for('teamname_url', teamname_url = game))
 
     name = deslogify(game)
 
@@ -155,12 +153,13 @@ def create_a_new_team():
             if row["name"] == teamname_url:
                 return apology("Sorry, this teamname has already been taken. Try something else", 403)
 
-        for game in gamename_list:
-            if game["name"] == teamname_url:
+        for game_name in gamename_list:
+            if game_name["name"] == teamname_url:
                 return apology("Sorry, this teamname is not allowed. Try something else", 403)
 
         # Query over db for amount of players and game id
-        game_id = db.execute("SELECT id FROM games WHERE name = :game", game = game)[0]["id"]
+        game_info = db.execute("SELECT id, players FROM games WHERE name = :game", game = game)
+        game_id = game_info[0]["id"]
 
         team_id = db.execute("INSERT INTO teams (name, game_id, teamtable) VALUES (:teamname, :game_id, '0')", {"teamname": teamname_url, "game_id": game_id})
 
@@ -173,7 +172,13 @@ def create_a_new_team():
 
         db.execute("INSERT INTO :teamtable (user_id, char_id, current_round) VALUES (:user_id, 0, 0)", {"user_id": user_id, "teamtable": teamtable})
 
-        return redirect("/<teamname_url>")
+        for player in range(game_info[0]["players"]):
+
+            columnname = "player_id_" + str(player+1)
+
+            db.execute("ALTER TABLE :teamtable ADD COLUMN :columnname text DEFAULT 'blank' NOT NULL", {"teamtable" : teamtable, "columnname" : columnname})
+
+        return redirect(url_for('teamname_url', teamname_url = teamname_url))
 
     else:
 
@@ -207,10 +212,7 @@ def teamname_url(teamname_url):
             player.update(db.execute("SELECT name, description FROM characters WHERE id = :char_id", char_id = team_ids[i]["char_id"]))
             team.append(player)
 
-    h = "Test"
-    host = validate_teamhost(user_id, teamname_url)
-
-    return render_template("team.html", teamname = teamname, h = h, host = host, invite = send_invite(teamname_url), teamname_url = teamname_url, team = team)
+    return render_template("team.html", teamname = teamname, invite = send_invite(teamname_url), teamname_url = teamname_url, team = team)
 
 
 @app.route("/<teamname_url>/invite", methods=["GET", "POST"])
@@ -229,7 +231,7 @@ def invite(teamname_url):
 
         elif send_invite(teamname_url) == False:
 
-            return redirect("/<teamname_url>")
+            return redirect("/")
 
         game_id = (db.execute("SELECT game_id FROM teams WHERE name = :teamname_url", teamname_url = teamname_url))[0]["game_id"]
 
@@ -270,13 +272,6 @@ def invite(teamname_url):
             emails.append(request.form.get(email_id))
             names.append(request.form.get(name_id).title())
 
-            """with app.app_context():
-                msg = Message(subject="Hello",
-                              sender=app.config.get("MAIL_USERNAME"),
-                              recipients=['charmaine211@hotmail.com'],
-                              body="This is a test email I sent with Gmail and Python!")
-                mail.send(msg)"""
-
         # Check for doubles
         if checkIfDuplicates(emails) == True:
 
@@ -300,7 +295,7 @@ def invite(teamname_url):
             db.execute("INSERT INTO :teamtable (user_id, char_id, current_round) VALUES(:user_id, 0, 0)", {"teamtable" : teamtable(teamname_url), "user_id" : user_id})
 
         # Redirect user to home page
-        return redirect("/<teamname_url>/choose-characters")
+        return redirect(url_for('choose_characters', teamname_url = teamname_url))
 
 
 @app.route("/<teamname_url>/choose-characters", methods=["GET", "POST"])
@@ -324,7 +319,7 @@ def choose_characters(teamname_url):
         # Check if all the candidates are invited
         elif send_invite(teamname_url) == True:
 
-            return redirect("/<teamname_url>/invite")
+            return redirect(url_for('invite', teamname_url = teamname_url))
 
         player_ids = db.execute("SELECT user_id, id FROM :teamtable", teamtable = teamtable(teamname_url))
         game_id = db.execute("SELECT game_id FROM teams WHERE name = :team_name", team_name = teamname_url)[0]["game_id"]
@@ -374,7 +369,7 @@ def choose_characters(teamname_url):
             db.execute("UPDATE :teamtable SET char_id = :char_id WHERE user_id = :user_id", {"teamtable" : teamtable(teamname_url), "char_id" : characters[j]["id"], "user_id" : users[character_userlist[j]]["id"]})
 
         # Redirect user to home page
-        return redirect("/<teamname_url>")
+        return redirect(url_for('teamname_url', teamname_url = teamname_url))
 
 
 @app.route("/<teamname_url>/<int:r>", methods=["GET", "POST"])
@@ -392,7 +387,7 @@ def round(teamname_url, r):
     # Check if all the candidates are invited
     if send_invite(teamname_url) == True:
 
-        return redirect("/<teamname_url>/invite")
+        return redirect(url_for('invite', teamname_url = teamname_url))
 
 
     # Check if the characters have been chosen
@@ -400,14 +395,14 @@ def round(teamname_url, r):
 
     if team_info[0]["char_id"] == 0:
 
-        return redirect("/<teamname_url>")
+        return redirect(url_for('teamname_url', teamname_url = teamname_url))
 
     # Round is only available when all the characters are there.
     for i in range(len(team_info)):
 
-        if team_info[i]["current_round"] < r:
+        if team_info[i]["current_round"] < r or r < 0:
 
-            return redirect("/<teamname_url>")
+            return redirect("/")
 
     game_id = db.execute("SELECT game_id FROM teams WHERE id = :team_id", team_id = int(teamtable(teamname_url).replace("team_","")))[0]["game_id"]
 
