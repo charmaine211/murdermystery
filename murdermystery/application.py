@@ -54,13 +54,14 @@ def index():
         users = db.execute("SELECT user_id FROM :teamtable", teamtable = teams[index]["teamtable"])
 
         for user in users:
+
             if user["user_id"] == user_id:
 
                 team_list.append(teams[index]["name"])
 
     valid_teams = len(team_list)
 
-    return render_template("teams.html", valid_teams = valid_teams, team_list = team_list)
+    return render_template("index.html", valid_teams = valid_teams, team_list = team_list)
 
 
 
@@ -100,7 +101,7 @@ def game_or_team(game_or_team):
                 player.update(db.execute("SELECT name, description FROM characters WHERE id = :char_id", char_id = team_ids[i]["char_id"]))
                 team.append(player)
 
-        return render_template("team.html", teamname = name, invite = send_invite(teamname_url), teamname_url = teamname_url, team = team)
+        return render_template("team.html", teamname = name, host = validate_teamhost(user_id, teamname_url), invite = send_invite(teamname_url), teamname_url = teamname_url, team = team)
 
     # Query over the game names
     game_info = db.execute("SELECT * FROM games WHERE name = :name", name = name)
@@ -202,7 +203,7 @@ def invite(teamname_url):
 
         if send_invite(teamname_url) == False:
 
-            return redirect(url_for('/<game_or_team>', game_or_team = teamname_url))
+            return redirect(url_for('game_or_team', game_or_team = teamname_url))
 
         game_id = (db.execute("SELECT game_id FROM teams WHERE name = :teamname_url", teamname_url = teamname_url))[0]["game_id"]
 
@@ -341,7 +342,7 @@ def choose_characters(teamname_url):
             db.execute("UPDATE :teamtable SET char_id = :char_id WHERE user_id = :user_id", {"teamtable" : teamtable(teamname_url), "char_id" : characters[j]["id"], "user_id" : users[character_userlist[j]]["id"]})
 
         # Redirect user to home page
-        return redirect(url_for('teamname_url', teamname_url = teamname_url))
+        return redirect(url_for('game_or_team', game_or_team = teamname_url))
 
 
 @app.route("/<teamname_url>/<int:r>", methods=["GET", "POST"])
