@@ -41,45 +41,6 @@ db = SQL("sqlite:///murdermystery.db")
 @login_required
 def index():
 
-    return redirect("/teams")
-
-
-@app.route("/games")
-@login_required
-def games():
-
-    games = db.execute("SELECT * FROM games")
-
-    return render_template("games.html", games=games)
-
-
-@app.route("/<game>")
-@login_required
-def game(game):
-
-    user_id = session["user_id"]
-
-    if validate_player(user_id, game):
-
-        return redirect(url_for('teamname_url', teamname_url = game))
-
-    name = deslogify(game)
-
-    game_info = db.execute("SELECT * FROM games WHERE name = :name", name = name)
-
-    if len(game_info)  == 0:
-
-        return redirect ("/games")
-
-    characters = db.execute("SELECT name, description FROM characters WHERE game_id=:game_id", game_id=game_info[0]["id"])
-
-    return render_template("game.html", game_info=game_info[0], characters=characters)
-
-
-@app.route("/teams")
-@login_required
-def teams():
-
     user_id = session["user_id"]
 
     team_list = []
@@ -100,6 +61,61 @@ def teams():
     valid_teams = len(team_list)
 
     return render_template("teams.html", valid_teams = valid_teams, team_list = team_list)
+
+
+
+@app.route("/games")
+@login_required
+def games():
+
+    games = db.execute("SELECT * FROM games")
+
+    return render_template("games.html", games=games)
+
+
+@app.route("/<game_or_team>")
+@login_required
+def game_or_team(game_or_team):
+
+    user_id = session["user_id"]
+
+    name = deslogify(game_or_team)
+
+    # Check if game_or_team is a team the user is part of
+    if validate_player(user_id, game_or_team) == True:
+
+        teamname_url = game_or_team
+
+        team = []
+
+        # Query over the characters
+        team_ids = db.execute("SELECT user_id, char_id FROM :teamtable", teamtable = teamtable(teamname_url))
+
+        # Make sure the characters are assigned before it is safed in teams
+        if team_ids[0]["char_id"] != 0:
+
+            for i in range(len(team_ids)):
+
+                player = db.execute("SELECT username, email FROM users WHERE id = :user_id", user_id = team_ids[i]["user_id"])
+                player.update(db.execute("SELECT name, description FROM characters WHERE id = :char_id", char_id = team_ids[i]["char_id"]))
+                team.append(player)
+
+        return render_template("team.html", teamname = name, invite = send_invite(teamname_url), teamname_url = teamname_url, team = team)
+
+    # Query over the game names
+    game_info = db.execute("SELECT * FROM games WHERE name = :name", name = name)
+
+    # When there's a match, go to the game page
+    if len(game_info) != 0:
+
+        characters = db.execute("SELECT name, description FROM characters WHERE game_id=:game_id", game_id=game_info[0]["id"])
+
+        return render_template("game.html", game_info=game_info[0], characters=characters)
+
+    else:
+
+        # When it's neither a team or a game, redirect the user back to
+        return redirect("/")
 
 
 @app.route("/create-a-new-team", methods=["GET", "POST"])
@@ -163,41 +179,11 @@ def create_a_new_team():
 
             db.execute("ALTER TABLE :teamtable ADD COLUMN :columnname text DEFAULT 'blank' NOT NULL", {"teamtable" : teamtable, "columnname" : columnname})
 
-        return redirect(url_for('teamname_url', teamname_url = teamname_url))
+        return redirect(url_for('/<game_or_team>', game_or_team = teamname_url))
 
     else:
 
         return render_template("create-a-new-team.html")
-
-
-@app.route("/<teamname_url>")
-@login_required
-def teamname_url(teamname_url):
-
-    user_id = session["user_id"]
-
-    if validate_player(user_id, teamname_url) == False:
-
-        return redirect("/create-a-new-team")
-
-    # Do stuff with the information from the tables
-    teamname = deslogify(teamname_url)
-
-    team = []
-
-    # Query over the characters
-    team_ids = db.execute("SELECT user_id, char_id FROM :teamtable", teamtable = teamtable(teamname_url))
-
-    # Make sure the characters are assigned before it is safed in teams
-    if team_ids[0]["char_id"] != 0:
-
-        for i in range(len(team_ids)):
-
-            player = db.execute("SELECT username, email FROM users WHERE id = :user_id", user_id = team_ids[i]["user_id"])
-            player.update(db.execute("SELECT name, description FROM characters WHERE id = :char_id", char_id = team_ids[i]["char_id"]))
-            team.append(player)
-
-    return render_template("team.html", teamname = teamname, invite = send_invite(teamname_url), teamname_url = teamname_url, team = team)
 
 
 @app.route("/<teamname_url>/invite", methods=["GET", "POST"])
@@ -214,9 +200,9 @@ def invite(teamname_url):
 
             return redirect("/create-new-team")
 
-        elif send_invite(teamname_url) == False:
+        if send_invite(teamname_url) == False:
 
-            return redirect("/")
+            return redirect(url_for('/<game_or_team>', game_or_team = teamname_url))
 
         game_id = (db.execute("SELECT game_id FROM teams WHERE name = :teamname_url", teamname_url = teamname_url))[0]["game_id"]
 
@@ -322,6 +308,7 @@ def choose_characters(teamname_url):
                 users.append(current_user)
 
             else:
+
                 users.append(db.execute("SELECT id, username, email FROM users WHERE id = :id", id = player_ids[i]["user_id"])[0])
 
         # Returns 2 lists with dicts containing character en user info
@@ -363,9 +350,8 @@ def round(teamname_url, r):
 
     user_id = session["user_id"]
 
-
-    # Check if player is the team host
-    if validate_teamhost(user_id, teamname_url) == False:
+    # Check if player is part of the team
+    if validate_player(user_id, teamname_url) == False:
 
         return redirect("/create-new-team")
 
@@ -374,20 +360,20 @@ def round(teamname_url, r):
 
         return redirect(url_for('invite', teamname_url = teamname_url))
 
-
-    # Check if the characters have been chosen
+    # Check if the characters have been chosen, at the same time check if they started the game (round 0)
     team_info = db.execute("SELECT char_id, current_round FROM :teamtable", teamtable = teamtable(teamname_url))
 
-    if team_info[0]["char_id"] == 0:
+    if team_info[0]["char_id"] == 0 or r == 0:
 
-        return redirect(url_for('teamname_url', teamname_url = teamname_url))
+        return redirect(url_for('game_or_team', game_or_team = teamname_url))
 
     # Round is only available when all the characters are there.
     for i in range(len(team_info)):
 
-        if team_info[i]["current_round"] < r or r < 0:
+        if team_info[i]["current_round"] < r:
 
-            return redirect("/")
+            # Send the user back to the lowest previous round
+            return redirect(url_for('round', teamname_url = teamname_url, r = i))
 
     game_id = db.execute("SELECT game_id FROM teams WHERE id = :team_id", team_id = int(teamtable(teamname_url).replace("team_","")))[0]["game_id"]
 
