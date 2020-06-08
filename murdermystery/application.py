@@ -66,12 +66,17 @@ def index():
 
 
 @app.route("/games")
-@login_required
 def games():
+
+    valid_account = True
+
+    if session.get("user_id") is None:
+
+        valid_account = False
 
     games = db.execute("SELECT * FROM games")
 
-    return render_template("games.html", games=games)
+    return render_template("games.html", games = games, valid_account = valid_account)
 
 
 @app.route("/<game_or_team>")
