@@ -10,8 +10,6 @@
 
     The page of {{ teamname }}!!
 
-    {{ h }}
-
     {% if invite %}
 
         <a href="/{{ teamname_url }}/invite">Invite your friends!</a>
@@ -25,15 +23,13 @@
 
             The characters still need to be assigned!
 
-            {% if h is defined %}
+            {% if host %}
 
                 <a href="/{{ teamname_url }}/choose-characters">Assign everyone a character!</a>
 
             {% else %}
 
                Ask your host to assign the characters.
-
-               h = {{ h }}
 
             {% endif %}
 
