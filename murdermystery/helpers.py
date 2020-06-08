@@ -34,14 +34,14 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
-            return redirect("/login")
+            return redirect("/games")
         return f(*args, **kwargs)
     return decorated_function
 
 
 def special_chars(word):
 
-    characters = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '<', '>', '[', ']', '{','}','|',';',':','§','±','€', '_', '-', '+', '=', '%', '^', '?', '/', '.', '\\', '\'', '\"']
+    characters = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '<', '>', '[', ']', '{','}','|',';',':','§','±','€', '_', '-', '+', '=', '%', '^', '?', '/', '.']
 
     if any(spec_char in characters for spec_char in word):
 
@@ -119,8 +119,11 @@ def send_invite(teamname_url):
 def checkIfDuplicates(listOfElems):
     ''' Check if given list contains any duplicates '''
     if len(listOfElems) == len(set(listOfElems)):
+
         return False
+
     else:
+
         return True
 
 # Teamtable
