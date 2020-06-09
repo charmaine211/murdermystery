@@ -457,8 +457,8 @@ def register():
         new_username = request.form.get("username")
 
         # Check if user has provided a new username
-        if len(new_username) == 0:
-            return apology("Please choose a username", 403)
+        if len(new_username) < 4 or len(new_username) > 15:
+            return apology("Choose a username with a length between 4 and 15 characters", 403)
 
         # Check if username is already exists.
         for row in username_list:
