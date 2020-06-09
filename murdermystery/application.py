@@ -434,17 +434,6 @@ def login():
         return render_template("login.html")
 
 
-@app.route("/logout")
-def logout():
-    """Log user out"""
-
-    # Forget any user_id
-    session.clear()
-
-    # Redirect user to login form
-    return redirect("/")
-
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
     # Forget any user_id
@@ -462,21 +451,21 @@ def register():
     else:
 
         # Query database for username
-        user_list = db.execute("SELECT username, email FROM users")
+        username_list = db.execute("SELECT username FROM users")
 
         # Ensure username was submitted or not already in list
         new_username = request.form.get("username")
-
-        # Ensure username was submitted or not already in list
-        new_email = request.form.get("email")
 
         # Check if user has provided a new username
         if len(new_username) == 0:
             return apology("Please choose a username", 403)
 
-        # Check if user has provided a new username
-        if len(new_email) == 0:
-            return apology("Please enter your email", 403)
+        # Check if username is already exists.
+        for row in username_list:
+            if row["username"] == new_username:
+                return apology("Sorry, this username has already been taken. Try something else", 403)
+
+        """ PROVIDE PASSWORD """
 
         # Ask for a password
         password = request.form.get("password")
@@ -485,8 +474,8 @@ def register():
         if not len(password) > 7:
             return apology("Password has to be at least 8 characters long", 403)
 
-        elif not special_chars(password):
-            return apology("Password has to have at least 1 special character", 403)
+        elif special_chars(password) == False:
+            return apology("Password has to have at least 1 special character: ", 403)
 
         elif not any(char.isdigit() for char in password):
             return apology("Password has to contain at least 1 number", 403)
@@ -503,26 +492,8 @@ def register():
         # Hash password
         hash_password = generate_password_hash(password, "sha256")
 
-       # Check if username or email is already exists.
-        for row in user_list:
-            # Check username, seperate from email bc can't exist already
-            if row["username"] == new_username:
-                return apology("Sorry, this username has already been taken. Try something else", 403)
-
-            if row["email"] == new_email:
-                # When the player is already added to the userlist, username and password are temp
-                if row["username"] == "temp":
-                    db.execute("UPDATE users SET username = :new_username, hash = :hash_password WHERE email = :new_email", {"new_username": new_username, "hash_password": hash_password, "new_email": new_email})
-                    user_id = row + 1
-                else:
-                    return apology("Sorry, this email already has an account.", 403)
-
-        if not user_id:
-            # Insert username & hash in users
-            user_id = db.execute("INSERT INTO users (username, hash, email) VALUES (:new_username, :hash_password, :new_email)", {"new_username": new_username, "hash_password": hash_password, "new_email": new_email})
-
-        # Remember which user has logged in
-        session["user_id"] = user_id
+        # Insert username & hash in users
+        db.execute("INSERT INTO users (username, hash) VALUES (:new_username, :hash_password)", {"new_username": new_username, "hash_password": hash_password})
 
         return redirect ("/")
 
