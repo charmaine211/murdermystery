@@ -16,15 +16,12 @@
 
             <!-- Show text, depending on selected game-->
             <div class="form-group">
-                <input class="form-control" name={{ "name" ~ player }} placeholder = {{ "Name " ~ player }} id = {{ "name" ~ player }} type="text" maxlength="15">
-            </div>
-            <div class="form-group">
-                <input class="form-control" name={{ "email" ~ player }} placeholder= {{ "Email " ~ player }}  id = {{ "email" ~ player }} type="email">
+                <input class="form-control" name={{ "username" ~ player }} placeholder = {{ "Username " ~ player }} id = {{ "username" ~ player }} type="text" maxlength="15">
             </div>
 
         {% endfor %}
 
-        <button class="btn btn-primary" type="submit">Create a new team</button>
+        <button class="btn btn-primary" type="submit">Invite</button>
 
     </form>
 
