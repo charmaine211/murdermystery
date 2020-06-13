@@ -64,7 +64,6 @@ def index():
     return render_template("index.html", valid_teams = valid_teams, team_list = team_list)
 
 
-
 @app.route("/games")
 def games():
 
@@ -218,10 +217,7 @@ def invite(teamname_url):
 
     else:
 
-        emails = []
-        names = []
-
-        user_emails = db.execute("SELECT email FROM users")
+        id_list = []
 
         # User is also part of team
         friends = players - 1
@@ -231,45 +227,28 @@ def invite(teamname_url):
 
             player = index + 1
 
-            email_id = "email" + str(player)
-            name_id = "name" + str(player)
+            form_name = "name" + str(player)
 
-            if not request.form.get(email_id):
+            # Query database for username
+            player_id = db.execute("SELECT id FROM users WHERE username = :username",
+                              username = request.form.get(form_name))
 
-                warning_email = "Please provide the email" + str(player)
+            # Ensure username exists and password is correct
+            if len(player_id) != 1:
 
-                return apology(warning_email, 403)
+                return apology("This username doesn't exist", 403)
 
-            if not request.form.get(name_id):
-
-                warning_name = "Please provide the name" + str(player)
-
-                return apology(warning_name, 403)
-
-            emails.append(request.form.get(email_id))
-            names.append(request.form.get(name_id).title())
+            id_list.append(player_id[0]["id"])
 
         # Check for doubles
-        if checkIfDuplicates(emails) == True:
+        if checkIfDuplicates(id_list) == True:
 
             return apology("You can't invite the same friend twice", 403)
 
         # Check for user_id friend
-        for index in range(len(emails)):
-            id_counter = 0
+        for i in range(len(id_list)):
 
-            # Check if user already exists
-            for row in user_emails:
-                id_counter += 1
-
-                if row["email"] == emails[index]:
-                    user_id = id_counter
-
-            # No user_id found, then create one
-            if not user_id:
-                user_id = db.execute("INSERT INTO users (email) VALUES(:email)", email = emails[index])
-
-            db.execute("INSERT INTO :teamtable (user_id, char_id, current_round) VALUES(:user_id, 0, 0)", {"teamtable" : teamtable(teamname_url), "user_id" : user_id})
+            db.execute("INSERT INTO :teamtable (user_id, char_id, current_round) VALUES(:user_id, 0, 0)", {"teamtable" : teamtable(teamname_url), "user_id" : id_list[i]})
 
         # Redirect user to home page
         return redirect(url_for('choose_characters', teamname_url = teamname_url))
