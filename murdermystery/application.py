@@ -184,7 +184,7 @@ def create_a_new_team():
 
             db.execute("ALTER TABLE :teamtable ADD COLUMN :columnname text DEFAULT 'blank' NOT NULL", {"teamtable" : teamtable, "columnname" : columnname})
 
-        return redirect(url_for('/<game_or_team>', game_or_team = teamname_url))
+        return redirect(url_for('game_or_team', game_or_team = teamname_url))
 
     else:
 
@@ -217,38 +217,68 @@ def invite(teamname_url):
 
     else:
 
-        id_list = []
+        names = []
 
-        # User is also part of team
+        usernames = db.execute("SELECT id, username FROM users")
+
+        game_id = (db.execute("SELECT game_id FROM teams WHERE name = :teamname_url", teamname_url = teamname_url))[0]["game_id"]
+
+        players = (db.execute("SELECT players FROM games WHERE id = :game_id", game_id = game_id))[0]["players"]
+
+        # Current user is also part of team
         friends = players - 1
 
-        # Min 1 omdat de eerste user al in de lijst staat
+        # Check if all the usernames are put in correctly
         for index in range(friends):
 
             player = index + 1
 
-            form_name = "name" + str(player)
+            form_name = "username" + str(player)
 
-            # Query database for username
-            player_id = db.execute("SELECT id FROM users WHERE username = :username",
-                              username = request.form.get(form_name))
+            if not request.form.get(form_name):
 
-            # Ensure username exists and password is correct
-            if len(player_id) != 1:
+                return apology("Please fill out all the usernames", 403)
 
-                return apology("This username doesn't exist", 403)
+            names.append(request.form.get(form_name))
 
-            id_list.append(player_id[0]["id"])
 
-        # Check for doubles
-        if checkIfDuplicates(id_list) == True:
+        if checkIfDuplicates(names) == True:
 
             return apology("You can't invite the same friend twice", 403)
 
-        # Check for user_id friend
-        for i in range(len(id_list)):
+        # Check if username exist
+        player_ids = []
 
-            db.execute("INSERT INTO :teamtable (user_id, char_id, current_round) VALUES(:user_id, 0, 0)", {"teamtable" : teamtable(teamname_url), "user_id" : id_list[i]})
+        error_list = []
+
+        for friend in range(friends):
+
+            exist = False
+
+            # Check if user already exists
+            for user in usernames:
+
+                if user["username"] == names[friend]:
+
+                    player_ids.append(user["id"])
+                    exist = True
+
+            if exist == False:
+
+                error_list.append(names[friend])
+
+
+        if len(error_list) > 0:
+
+            errors = ', '.join(error_list)
+
+            warning_message = "The following users do not exist: " + errors
+
+            return apology(warning_message, 403)
+
+        for i in range(len(player_ids)):
+
+            db.execute("INSERT INTO :teamtable (user_id, char_id, current_round) VALUES(:user_id, 0, 0)", {"teamtable" : teamtable(teamname_url), "user_id" : player_ids[i]})
 
         # Redirect user to home page
         return redirect(url_for('choose_characters', teamname_url = teamname_url))
@@ -288,13 +318,13 @@ def choose_characters(teamname_url):
 
             if player_ids[i]["user_id"] == user_id:
 
-                current_user = db.execute("SELECT id, email FROM users WHERE id = :id", id = player_ids[i]["user_id"])[0]
+                current_user = db.execute("SELECT id FROM users WHERE id = :id", id = player_ids[i]["user_id"])[0]
                 current_user.update(username = 'Me')
                 users.append(current_user)
 
             else:
 
-                users.append(db.execute("SELECT id, username, email FROM users WHERE id = :id", id = player_ids[i]["user_id"])[0])
+                users.append(db.execute("SELECT id, username FROM users WHERE id = :id", id = player_ids[i]["user_id"])[0])
 
         # Returns 2 lists with dicts containing character en user info
         return render_template("choose-characters.html", characters = characters, teamname_url = teamname_url, users = users, nr_characters = nr_characters)
@@ -472,9 +502,23 @@ def register():
         hash_password = generate_password_hash(password, "sha256")
 
         # Insert username & hash in users
-        db.execute("INSERT INTO users (username, hash) VALUES (:new_username, :hash_password)", {"new_username": new_username, "hash_password": hash_password})
+        user_id = db.execute("INSERT INTO users (username, hash) VALUES (:new_username, :hash_password)", {"new_username": new_username, "hash_password": hash_password})
+
+        # Remember which user has logged in
+        session["user_id"] = user_id
 
         return redirect ("/")
+
+
+@app.route("/logout")
+def logout():
+    """Log user out"""
+
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to login form
+    return redirect("/")
 
 
 def errorhandler(e):
