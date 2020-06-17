@@ -6,13 +6,18 @@
 
 {% block main %}
 
-    <a href="create-a-new-team">Create a new team</a>
+    <p><a href="create-a-new-team">Create a new team</a></p>
 
     <!-- Show all the teams in nice table -->
     {% if valid_teams > 0 %}
 
-        User is part of {{ valid_teams }} team.
-        This is the list: {{ team_list }}
+        <div><p>Go to your teams:</p>
+        {% for team in team_list %}
+
+            <p><a href="/{{ team.url }}">{{ team.name }}</a></p>
+
+        {% endfor %}
+        </div>
 
     {% endif %}
 
