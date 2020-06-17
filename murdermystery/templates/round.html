@@ -10,21 +10,41 @@
 
     {% for info in game_info %}
 
-        <p><b>Scenario</b></p>
+        {% if r == 0 %}
 
-        <p>{{ info["scenario"] }}</p>
+            {{ info.scenario }}
 
-        <p><b>Fact</b></p>
+        {% else %}
 
-        <p>{{ info["facts"] }}</p>
+            <p><b>Scenario</b></p>
 
-        <p><b>Secret</b></p>
+            <p>{{ info.scenario }}</p>
 
-        <p>{{ info["secrets"] }}</p>
+            {% if info.facts != "0" %}
 
-        <p><b>Clue</b></p>
+                <p><b>Fact</b></p>
 
-        <p>{{ info["clue"] }}</p>
+                <p>{{ info.facts }}</p>
+
+            {% endif %}
+
+            {% if info.secrets != "0" %}
+
+                <p><b>Secret</b></p>
+
+                <p>{{ info.secrets }}</p>
+
+            {% endif %}
+
+            {% if info.clue != 0 %}
+
+                <p><b>Clue</b></p>
+
+                <p>{{ info.clue }}</p>
+
+            {% endif %}
+
+        {% endif %}
 
     {% endfor %}
 
