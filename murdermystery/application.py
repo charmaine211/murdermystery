@@ -57,7 +57,7 @@ def index():
 
             if user["user_id"] == user_id:
 
-                team_list.append(teams[index]["name"])
+                team_list.append({"url" : teams[index]["name"], "name": deslogify(teams[index]["name"])})
 
     valid_teams = len(team_list)
 
