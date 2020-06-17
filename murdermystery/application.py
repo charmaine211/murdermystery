@@ -101,9 +101,11 @@ def game_or_team(game_or_team):
 
             for i in range(len(team_ids)):
 
-                player = db.execute("SELECT username FROM users WHERE id = :user_id", user_id = team_ids[i]["user_id"])
-                char_id = team_ids[i]["char_id"]
-                player.update(db.execute("SELECT name, description FROM characters WHERE id = :char_id", char_id = char_id))
+                player = db.execute("SELECT username FROM users WHERE id = :user_id", user_id = team_ids[i]["user_id"])[0]
+
+                character = db.execute("SELECT name, description FROM characters WHERE id = :char_id", char_id = team_ids[i]["char_id"])[0]
+                player.update(character)
+
                 team.append(player)
 
         return render_template("team.html", teamname = name, host = validate_teamhost(user_id, teamname_url), invite = send_invite(teamname_url), teamname_url = teamname_url, team = team)
