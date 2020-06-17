@@ -45,6 +45,18 @@
 
             {% endfor %}
 
+            {% if current_round > 0 %}
+
+                Current round: {{ current_round }}
+
+            {% else %}
+
+                Start game!
+
+                {{ current_round }}
+
+            {% endif %}
+
         {% endif %}
 
     {% endif %}
