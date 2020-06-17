@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import apology, login_required, special_chars, slogify, deslogify, validate_player, send_invite, checkIfDuplicates, validate_teamhost, teamtable
+from helpers import apology, login_required, special_chars, slogify, deslogify, validate_player, send_invite, checkIfDuplicates, validate_teamhost, teamtable, current_round
 from safespace import gmail
 
 # Configure application
@@ -86,7 +86,7 @@ def game_or_team(game_or_team):
 
     name = deslogify(game_or_team)
 
-    # Check if it's a team
+    # Is it a team?
     if validate_player(user_id, game_or_team) == True:
 
         teamname_url = game_or_team
@@ -108,9 +108,10 @@ def game_or_team(game_or_team):
 
                 team.append(player)
 
-        return render_template("team.html", teamname = name, host = validate_teamhost(user_id, teamname_url), invite = send_invite(teamname_url), teamname_url = teamname_url, team = team)
+        # Return the HTML with all the info that's available for the team
+        return render_template("team.html", teamname = name, host = validate_teamhost(user_id, teamname_url), invite = send_invite(teamname_url), teamname_url = teamname_url, team = team, current_round = current_round(teamname_url))
 
-    # Check if it's a game
+    # Is it a game?
     game_info = db.execute("SELECT * FROM games WHERE name = :name", name = name)
 
     if len(game_info) != 0:
@@ -119,7 +120,7 @@ def game_or_team(game_or_team):
 
         return render_template("game.html", game_info=game_info[0], characters=characters)
 
-    # It's neither a game or team
+    # Nah, it's neither
     else:
 
         # When it's neither a team or a game, redirect the user back to
@@ -132,7 +133,6 @@ def create_a_new_team():
 
     user_id = session["user_id"]
 
-    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
         new_teamname = request.form.get("teamname")
@@ -244,12 +244,11 @@ def invite(teamname_url):
 
             names.append(request.form.get(form_name))
 
-
         if checkIfDuplicates(names) == True:
 
             return apology("You can't invite the same friend twice", 403)
 
-        # Check if username exist
+        # Does the username exist?
         player_ids = []
 
         error_list = []
@@ -297,12 +296,17 @@ def choose_characters(teamname_url):
 
         users = []
 
-        # Check if player is the team host
-        if validate_teamhost(user_id, teamname_url) == False:
+        # Is the player part of the team?
+        if validate_player(user_id, teamname_url) == False:
 
             return redirect("/create-new-team")
 
-        # Check if all the candidates are invited
+        # Is it the host?
+        elif validate_teamhost(user_id, teamname_url) == False:
+
+            return redirect(url_for('game_or_team', game_or_team = teamname_url))
+
+        # Do player still need to be invited?
         elif send_invite(teamname_url) == True:
 
             return redirect(url_for('invite', teamname_url = teamname_url))
@@ -374,41 +378,61 @@ def round(teamname_url, r):
 
     user_id = session["user_id"]
 
-    # Check if player is part of the team
-    if validate_player(user_id, teamname_url) == False:
+    if request.method == "GET":
 
-        return redirect("/create-new-team")
+        # Check if player is part of the team
+        if validate_player(user_id, teamname_url) == False:
 
-    # Check if all the candidates are invited
-    if send_invite(teamname_url) == True:
+            return redirect("/create-new-team")
 
-        return redirect(url_for('invite', teamname_url = teamname_url))
+        # Check if all the candidates are invited
+        if send_invite(teamname_url) == True:
 
-    # Check if the characters have been chosen, at the same time check if they started the game (round 0)
-    team_info = db.execute("SELECT char_id, current_round FROM :teamtable", teamtable = teamtable(teamname_url))
+            return redirect(url_for('invite', teamname_url = teamname_url))
 
-    if team_info[0]["char_id"] == 0 or r == 0:
+        # Check if the characters have been chosen, at the same time check if they started the game (round 0)
+        team_info = db.execute("SELECT char_id, current_round FROM :teamtable", teamtable = teamtable(teamname_url))
 
-        return redirect(url_for('game_or_team', game_or_team = teamname_url))
+        if team_info[0]["char_id"] == 0:
 
-    # Round is only available when all the characters are there.
-    for i in range(len(team_info)):
+            return redirect(url_for('game_or_team', game_or_team = teamname_url))
 
-        if team_info[i]["current_round"] < r:
+        # Does the player want to go to a round that they haven't played yet?
+        if r > current_round(teamname_url):
 
-            # Send the user back to the lowest previous round
-            return redirect(url_for('round', teamname_url = teamname_url, r = i))
+            return redirect(url_for('round', teamname_url = teamname_url, r = current_round(teamname_url)))
 
-    game_id = db.execute("SELECT game_id FROM teams WHERE id = :team_id", team_id = int(teamtable(teamname_url).replace("team_","")))[0]["game_id"]
 
-    game_name = db.execute("SELECT name FROM games WHERE id = :game_id", game_id = game_id)[0]["name"]
+        """ After all the checks, let's gather the info that's available for this round """
 
-    game_table = game_name.lower().replace(" ","")
+        # Round 0 is the invitation round that's the same for all the other players
 
-    game_info = db.execute("SELECT * FROM :game_table WHERE char_id = :char_id AND round = :r", {"game_table": game_table, "char_id" : team_info[0]["char_id"], "r" : r})
+        game_id = db.execute("SELECT game_id FROM teams WHERE id = :team_id", team_id = int(teamtable(teamname_url).replace("team_","")))[0]["game_id"]
 
-    # Return the round template that is dynamically created
-    return render_template("round.html", r = r, game_info = game_info)
+        game_name = db.execute("SELECT name FROM games WHERE id = :game_id", game_id = game_id)[0]["name"]
+
+        game_table = game_name.lower().replace(" ","")
+
+        char_id = team_info[0]["char_id"]
+
+        if r == 0:
+
+            char_id = 0
+
+        game_info = db.execute("SELECT * FROM :game_table WHERE char_id = :char_id AND round = :r", {"game_table": game_table, "char_id" : char_id, "r" : r})
+
+        # Return the round template that is dynamically created
+        return render_template("round.html", r = r, game_info = game_info)
+
+    else:
+
+        """ Request is post, we need to do something with the user input"""
+
+        # User can add notes to their notebook
+
+        # User has to let the app know if they shared all the info
+
+        # User can vote for the murderer during the last round
 
 
 @app.route("/login", methods=["GET", "POST"])
