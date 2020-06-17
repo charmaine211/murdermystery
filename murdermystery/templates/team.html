@@ -8,7 +8,7 @@
 
 {% block main %}
 
-    The page of {{ teamname }}!!
+    <p> The page of {{ teamname }}!! </p>
 
     {% if invite %}
 
@@ -35,7 +35,15 @@
 
         {% else %}
 
-            {{ team }}
+            {% for player in team %}
+
+                <b><p>{{ player.username}}</p></b>
+
+                <p>{{ player.name }}</p>
+
+                <p>{{ player.description }}</p>
+
+            {% endfor %}
 
         {% endif %}
 
