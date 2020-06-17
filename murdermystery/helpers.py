@@ -132,3 +132,21 @@ def teamtable(teamname_url):
     teamtable = db.execute("SELECT teamtable FROM teams WHERE name = :teamname", teamname = teamname_url)[0]["teamtable"]
 
     return teamtable
+
+
+# Teamtable
+def current_round(teamname_url):
+
+    # Query over the characters
+    rounds = db.execute("SELECT current_round FROM :teamtable", teamtable = teamtable(teamname_url))
+
+    # Find the current round, the lowest number is the current round
+    current_round = rounds[0]["current_round"]
+
+    for r in rounds:
+
+        if current_round > r["current_round"]:
+
+            current_round = r["current_round"]
+
+    return current_round
