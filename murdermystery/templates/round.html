@@ -2,71 +2,61 @@
 
 {% block title %}
 
-        {% if r == 0 %}
-
-            The Rules
-
-        {% else %}
-
-            Round: {{ r }}
-
-        {% endif %}
-
+    {{ teamname }}
 
 {% endblock %}
 
 {% block main %}
 
-    {% for info in game_info %}
+    <p> The page of {{ teamname }}!! </p>
 
-        {% if r == 0 %}
+    {% if invite %}
 
-            {{ info.scenario|safe }}
+        <a href="/{{ teamname_url }}/invite">Invite your friends!</a>
+
+    {% else %}
+
+        <!-- Display game when everyone is invited
+        Characters assigned? Otherwise display assign list -->
+
+        {% if team|length < 1 %}
+
+            The characters still need to be assigned!
+
+            {% if host %}
+
+                <a href="/{{ teamname_url }}/choose-characters">Assign everyone a character!</a>
+
+            {% else %}
+
+               Ask your host to assign the characters.
+
+            {% endif %}
 
         {% else %}
 
-            <p><b>Scenario</b></p>
+            {% for player in team %}
 
-            <p>{{ info.scenario|safe }}</p>
+                <b><p>{{ player.username}}</p></b>
 
-            {% if info.facts != "0" %}
+                <p>{{ player.name }}</p>
 
-                <p><b>Fact</b></p>
+                <p>{{ player.description }}</p>
 
-                <p>{{ info.facts|safe }}</p>
+            {% endfor %}
 
-            {% endif %}
+            {% if current_round > 0 %}
 
-            {% if info.secrets != "0" %}
+                <a href="/{{ teamname_url }}/{{ current_round }}">Go to the current round: {{ current_round }}</a>
 
-                <p><b>Secret</b></p>
+            {% else %}
 
-                <p>{{ info.secrets|safe }}</p>
-
-            {% endif %}
-
-            {% if info.clue != 0 %}
-
-                <p><b>Clue</b></p>
-
-                <img src="/static/img/sourgrapesofwrath/clues/{{ clue }}" alt="{{ clue }}">
+                <a href="/{{ teamname_url }}/{{ current_round }}">The Rules</a>
 
             {% endif %}
-
-            {% if r != 1 %}
-
-            <a href="/{{ teamname_url }}/{{ r - 1 }}"> Go back to the previous round </a>
-
-            {% elif r != max_rounds %}
-
-                <a href="/{{ teamname_url }}/{{ r + 1 }}"> Go to the next round </a>
-
-            {% endif %}
-
-            <a href="/{{ teamname_url }}/0"> The Rules </a>
 
         {% endif %}
 
-    {% endfor %}
+    {% endif %}
 
 {% endblock %}
