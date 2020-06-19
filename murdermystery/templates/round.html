@@ -2,7 +2,16 @@
 
 {% block title %}
 
-        Round {{ r }}
+        {% if r == 0 %}
+
+            The Rules
+
+        {% else %}
+
+            Round: {{ r }}
+
+        {% endif %}
+
 
 {% endblock %}
 
@@ -12,19 +21,19 @@
 
         {% if r == 0 %}
 
-            {{ info.scenario }}
+            {{ info.scenario|safe }}
 
         {% else %}
 
             <p><b>Scenario</b></p>
 
-            <p>{{ info.scenario }}</p>
+            <p>{{ info.scenario|safe }}</p>
 
             {% if info.facts != "0" %}
 
                 <p><b>Fact</b></p>
 
-                <p>{{ info.facts }}</p>
+                <p>{{ info.facts|safe }}</p>
 
             {% endif %}
 
@@ -32,7 +41,7 @@
 
                 <p><b>Secret</b></p>
 
-                <p>{{ info.secrets }}</p>
+                <p>{{ info.secrets|safe }}</p>
 
             {% endif %}
 
@@ -40,9 +49,21 @@
 
                 <p><b>Clue</b></p>
 
-                <p>{{ info.clue }}</p>
+                <img src="/static/img/sourgrapesofwrath/clues/{{ clue }}" alt="{{ clue }}">
 
             {% endif %}
+
+            {% if r != 1 %}
+
+            <a href="/{{ teamname_url }}/{{ r - 1 }}"> Go back to the previous round </a>
+
+            {% elif r != max_rounds %}
+
+                <a href="/{{ teamname_url }}/{{ r + 1 }}"> Go to the next round </a>
+
+            {% endif %}
+
+            <a href="/{{ teamname_url }}/0"> The Rules </a>
 
         {% endif %}
 
