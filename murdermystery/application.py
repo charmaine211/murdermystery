@@ -398,10 +398,9 @@ def round(teamname_url, r):
             return redirect(url_for('game_or_team', game_or_team = teamname_url))
 
         # Does the player want to go to a round that they haven't played yet?
-        if r > current_round(teamname_url):
+        #if r > current_round(teamname_url):
 
-            return redirect(url_for('round', teamname_url = teamname_url, r = current_round(teamname_url)))
-
+            #return redirect(url_for('round', teamname_url = teamname_url, r = current_round(teamname_url)))
 
         """ After all the checks, let's gather the info that's available for this round """
 
@@ -413,6 +412,12 @@ def round(teamname_url, r):
 
         game_table = game_name.lower().replace(" ","")
 
+        max_rounds = db.execute("SELECT max(round) FROM :game_table", game_table = game_table)[0]["max(round)"]
+
+        if r > max_rounds:
+
+            return redirect(url_for('game_or_team', game_or_team = teamname_url))
+
         char_id = team_info[0]["char_id"]
 
         if r == 0:
@@ -421,8 +426,10 @@ def round(teamname_url, r):
 
         game_info = db.execute("SELECT * FROM :game_table WHERE char_id = :char_id AND round = :r", {"game_table": game_table, "char_id" : char_id, "r" : r})
 
+        clue = str(game_info[0]["clue"]) + ".jpg"
+
         # Return the round template that is dynamically created
-        return render_template("round.html", r = r, game_info = game_info)
+        return render_template("round.html", r = r, game_info = game_info, teamname_url = teamname_url, max_rounds = max_rounds, clue = clue)
 
     else:
 
