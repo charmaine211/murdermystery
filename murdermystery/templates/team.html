@@ -47,19 +47,16 @@
 
             {% if current_round > 0 %}
 
-                Current round: {{ current_round }}
+                <a href="/{{ teamname_url }}/{{ current_round }}">Go to the current round: {{ current_round }}</a>
 
             {% else %}
 
-                Start game!
-
-                {{ current_round }}
+                <a href="/{{ teamname_url }}/rules">The Rules</a>
 
             {% endif %}
 
         {% endif %}
 
     {% endif %}
-
 
 {% endblock %}
