@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}
+
+            The Rules
+
+{% endblock %}
+
+{% block main %}
+
+    {% for info in game_info %}
+
+       {{ info.scenario|safe }}
+
+    {% endfor %}
+
+{% endblock %}
