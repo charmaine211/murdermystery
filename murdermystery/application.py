@@ -8,7 +8,6 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import apology, login_required, special_chars, slogify, deslogify, validate_player, send_invite, checkIfDuplicates, validate_teamhost, teamtable, current_round
-from safespace import gmail
 
 # Configure application
 app = Flask(__name__)
@@ -269,7 +268,6 @@ def invite(teamname_url):
 
                 error_list.append(names[friend])
 
-
         if len(error_list) > 0:
 
             errors = ', '.join(error_list)
@@ -431,15 +429,28 @@ def round(teamname_url, r):
         # Return the round template that is dynamically created
         return render_template("round.html", r = r, game_info = game_info, teamname_url = teamname_url, max_rounds = max_rounds, clue = clue)
 
-    else:
 
-        """ Request is post, we need to do something with the user input"""
+@app.route("/<teamname_url>/rules")
+@login_required
+def rules(teamname_url):
 
-        # User can add notes to their notebook
+    user_id = session["user_id"]
 
-        # User has to let the app know if they shared all the info
+    # Check if player is part of the team
+    if validate_player(user_id, teamname_url) == False:
 
-        # User can vote for the murderer during the last round
+        return redirect("/create-new-team")
+
+    game_id = db.execute("SELECT game_id FROM teams WHERE id = :team_id", team_id = int(teamtable(teamname_url).replace("team_","")))[0]["game_id"]
+
+    game_name = db.execute("SELECT name FROM games WHERE id = :game_id", game_id = game_id)[0]["name"]
+
+    game_table = game_name.lower().replace(" ","")
+
+    game_info = db.execute("SELECT * FROM :game_table WHERE char_id = 0 AND round = 0", game_table = game_table)
+
+    # Return the round template that is dynamically created
+    return render_template("rules.html", game_info = game_info, teamname_url = teamname_url)
 
 
 @app.route("/login", methods=["GET", "POST"])
