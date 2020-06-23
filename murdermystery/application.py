@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import apology, login_required, special_chars, slogify, deslogify, validate_player, send_invite, checkIfDuplicates, validate_teamhost, teamtable, current_round
+from helpers import apology, login_required, special_chars, slogify, deslogify, validate_player, send_invite, checkIfDuplicates, validate_teamhost, teamtable, current_round, max_rounds
 
 # Configure application
 app = Flask(__name__)
@@ -108,7 +108,7 @@ def game_or_team(game_or_team):
                 team.append(player)
 
         # Return the HTML with all the info that's available for the team
-        return render_template("team.html", teamname = name, host = validate_teamhost(user_id, teamname_url), invite = send_invite(teamname_url), teamname_url = teamname_url, team = team, current_round = current_round(teamname_url))
+        return render_template("team.html", teamname = name, host = validate_teamhost(user_id, teamname_url), invite = send_invite(teamname_url), teamname_url = teamname_url, team = team, max_rounds = max_rounds(teamname_url))
 
     # Is it a game?
     game_info = db.execute("SELECT * FROM games WHERE name = :name", name = name)
@@ -370,7 +370,7 @@ def choose_characters(teamname_url):
         return redirect(url_for('game_or_team', game_or_team = teamname_url))
 
 
-@app.route("/<teamname_url>/<int:r>", methods=["GET", "POST"])
+@app.route("/<teamname_url>/<int:r>")
 @login_required
 def round(teamname_url, r):
 
@@ -410,24 +410,32 @@ def round(teamname_url, r):
 
         game_table = game_name.lower().replace(" ","")
 
-        max_rounds = db.execute("SELECT max(round) FROM :game_table", game_table = game_table)[0]["max(round)"]
+        max_r = max_rounds(teamname_url)
 
-        if r > max_rounds:
+        if r > max_r or r < 1:
 
             return redirect(url_for('game_or_team', game_or_team = teamname_url))
 
-        char_id = team_info[0]["char_id"]
-
-        if r == 0:
-
-            char_id = 0
-
-        game_info = db.execute("SELECT * FROM :game_table WHERE char_id = :char_id AND round = :r", {"game_table": game_table, "char_id" : char_id, "r" : r})
+        game_info = db.execute("SELECT * FROM :game_table WHERE char_id = :char_id AND round = :r", {"game_table": game_table, "char_id" : team_info[0]["char_id"], "r" : r})
 
         clue = str(game_info[0]["clue"]) + ".jpg"
 
+        # Grid for styling purposes
+
+        grid_size = 12
+
+        if len(team_info) % 2 != 0:
+
+            grid_size = 12/3
+
+        elif len(team_info) % 3 != 0:
+
+            grid_size = 12/3
+
+        grid = "col-sm-" + str(grid_size)
+
         # Return the round template that is dynamically created
-        return render_template("round.html", r = r, game_info = game_info, teamname_url = teamname_url, max_rounds = max_rounds, clue = clue)
+        return render_template("round.html", r = r, game_info = game_info, teamname_url = teamname_url, max_rounds = max_r, clue = clue, grid = grid)
 
 
 @app.route("/<teamname_url>/rules")
@@ -450,7 +458,7 @@ def rules(teamname_url):
     game_info = db.execute("SELECT * FROM :game_table WHERE char_id = 0 AND round = 0", game_table = game_table)
 
     # Return the round template that is dynamically created
-    return render_template("rules.html", game_info = game_info, teamname_url = teamname_url)
+    return render_template("rules.html", game_info = game_info, teamname_url = teamname_url, teamname = deslogify(teamname_url))
 
 
 @app.route("/login", methods=["GET", "POST"])
