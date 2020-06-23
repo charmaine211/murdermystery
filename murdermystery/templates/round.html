@@ -4,22 +4,19 @@
 
         Round: {{ r }}
 
-
 {% endblock %}
 
 {% block main %}
 
     {% for info in game_info %}
 
+            <p><h3>Round: {{ r }}</h3></p>
 
-
-            <p><b>Scenario</b></p>
-
-            <p>{{ info.scenario|safe }}</p>
+            <p><i>{{ info.scenario|safe }}</i></p>
 
             {% if info.facts != "0" %}
 
-                <p><b>Fact</b></p>
+                <div><h5>Fact</h5></div>
 
                 <p>{{ info.facts|safe }}</p>
 
@@ -27,31 +24,42 @@
 
             {% if info.secrets != "0" %}
 
-                <p><b>Secret</b></p>
+            <p><div class="container">
 
-                <p>{{ info.secrets|safe }}</p>
+                <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#secret">Reveal secret</button>
+                <div id="secret" class="collapse">
+                    <p>{{ info.secrets|safe }} </p>
+                </div>
 
+            </div></p>
             {% endif %}
 
             {% if info.clue != 0 %}
 
-                <p><b>Clue</b></p>
+            <p><div class="container">
 
-                <img src="/static/img/sourgrapesofwrath/clues/{{ clue }}" alt="{{ clue }}">
+                <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#clue">You found a clue!</button>
+                <div id="clue" class="collapse">
+                    <p> <img src="/static/img/sourgrapesofwrath/clues/{{ clue }}" alt="{{ clue }}"> </p>
+                </div>
+
+            </div></p>
 
             {% endif %}
 
             {% if r != 1 %}
 
-                <a href="/{{ teamname_url }}/{{ r - 1 }}"> Go back to the previous round </a>
-
-            {% elif r != max_rounds %}
-
-                <a href="/{{ teamname_url }}/{{ r + 1 }}"> Go to the next round </a>
+                <p><a href="/{{ teamname_url }}/{{ r - 1 }}"> Go back to the previous round </a></p>
 
             {% endif %}
 
-            <a href="/{{ teamname_url }}/rules"> The Rules </a>
+            {% if r != max_rounds %}
+
+                <p><a href="/{{ teamname_url }}/{{ r + 1 }}"> Go to the next round</a></p>
+
+            {% endif %}
+
+            <p><a href="/{{ teamname_url }}/rules"> The Rules </a></p>
 
     {% endfor %}
 
