@@ -150,3 +150,16 @@ def current_round(teamname_url):
             current_round = r["current_round"]
 
     return current_round
+
+
+def max_rounds(teamname_url):
+
+        game_id = db.execute("SELECT game_id FROM teams WHERE id = :team_id", team_id = int(teamtable(teamname_url).replace("team_","")))[0]["game_id"]
+
+        game_name = db.execute("SELECT name FROM games WHERE id = :game_id", game_id = game_id)[0]["name"]
+
+        game_table = game_name.lower().replace(" ","")
+
+        max_rounds = db.execute("SELECT max(round) FROM :game_table", game_table = game_table)[0]["max(round)"]
+
+        return max_rounds
