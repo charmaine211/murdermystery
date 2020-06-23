@@ -8,7 +8,7 @@
 
 {% block main %}
 
-    <p> The page of {{ teamname }}!! </p>
+    <p><h3>{{ teamname }}</h3></p>
 
     {% if invite %}
 
@@ -21,39 +21,41 @@
 
         {% if team|length < 1 %}
 
-            The characters still need to be assigned!
+            <p>The characters still need to be assigned!</p>
 
             {% if host %}
 
-                <a href="/{{ teamname_url }}/choose-characters">Assign everyone a character!</a>
+                <p><a href="/{{ teamname_url }}/choose-characters">Assign everyone a character!</a></p>
 
             {% else %}
 
-               Ask your host to assign the characters.
+               <p>Ask your host to assign the characters.</p>
 
             {% endif %}
 
         {% else %}
+            <h5> The potential killers </h5>
 
-            {% for player in team %}
+                {% for player in team %}
 
-                <b><p>{{ player.username}}</p></b>
+                    <b><p>{{ player.username}}</p></b>
 
-                <p>{{ player.name }}</p>
+                    <p>{{ player.name }}</p>
 
-                <p>{{ player.description }}</p>
+                    <p>{{ player.description }}</p>
+
+                {% endfor %}
+
+            <div><h5> Rounds </h5>
+            <p><i>Beware not to spoil it for yourself!</i></p>
+
+            {% for round in range(max_rounds) %}
+
+                <p><a href="/{{ teamname_url }}/{{ round + 1 }}">Round {{ round + 1 }}</a></p></div>
 
             {% endfor %}
 
-            {% if current_round > 0 %}
-
-                <a href="/{{ teamname_url }}/{{ current_round }}">Go to the current round: {{ current_round }}</a>
-
-            {% else %}
-
-                <a href="/{{ teamname_url }}/rules">The Rules</a>
-
-            {% endif %}
+                <div><p><a href="/{{ teamname_url }}/rules">The Rules</a></p></div>
 
         {% endif %}
 
