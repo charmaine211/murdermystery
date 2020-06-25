@@ -4,6 +4,7 @@
 
         Round: {{ r }}
 
+
 {% endblock %}
 
 {% block main %}
@@ -26,7 +27,7 @@
 
             <p><div class="container">
 
-                <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#secret">Reveal secret</button>
+                <p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#secret">Reveal secret</button></p>
                 <div id="secret" class="collapse">
                     <p>{{ info.secrets|safe }} </p>
                 </div>
