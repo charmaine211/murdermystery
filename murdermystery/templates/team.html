@@ -34,29 +34,49 @@
             {% endif %}
 
         {% else %}
-            <h5> The potential killers </h5>
 
-                {% for player in team %}
+            <div class="grid-container">
 
-                    <b><p>{{ player.username}}</p></b>
+                <div class="grid-item">
 
-                    <p>{{ player.name }}</p>
+                    <p><a href="/{{ teamname_url }}/rules" class="btn btn-info">The Rules</a></p>
 
-                    <p>{{ player.description }}</p>
+                    <p><i>Beware not to spoil it for yourself!</i>
+                    <div class="dropdown">
+                        <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Rounds
+                        <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
 
-                {% endfor %}
+                            {% for round in range(max_rounds) %}
 
-            <div><h5> Rounds </h5>
-            <p><i>Beware not to spoil it for yourself!</i></p>
+                                <li><a href="/{{ teamname_url }}/{{ round + 1 }}">Round {{ round + 1 }}</a></li>
 
-            {% for round in range(max_rounds) %}
+                            {% endfor %}
+                        </ul>
+                    </div></p>
 
-                <p><a href="/{{ teamname_url }}/{{ round + 1 }}">Round {{ round + 1 }}</a></p></div>
+                </div>
 
-            {% endfor %}
+                <div class="grid-item">
+                    <h5> The potential killers </h5>
 
-                <div><p><a href="/{{ teamname_url }}/rules">The Rules</a></p></div>
+                    <div class="flex-container">
 
+                            {% for player in team %}
+
+                                <div>
+                                    <b><p>{{ player.username}}</p></b>
+
+                                    <p>{{ player.name }}</p>
+
+                                    <p>{{ player.description }}</p>
+                                </div>
+
+                            {% endfor %}
+
+                    </div>
+                </div>
+            </div>
         {% endif %}
 
     {% endif %}
