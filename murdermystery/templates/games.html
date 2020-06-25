@@ -6,22 +6,22 @@
 
 {% block main %}
 
+    <p><h3>Games</h3></p>
+
     {% for game in games %}
 
         {% if valid_account %}
 
-            <h4><a href="/{{ game.name|lower()|replace(' ', '-') }}">{{ game.name }}</a></h4>
+            <a class="btn btn-default" onclick="window.location.href='/{{ game.name|lower()|replace(' ', '-') }}'">{{ game.name }}</a>
         {% else %}
 
-            <h3>{{ game.name }}</h3>
+            <b >{{ game.name }}</b>
 
         {% endif %}
 
         <p><h6><b>The Scenario</b></h6>
 
-        {{ game.description }}
-
-        </p>
+        <i>{{ game.description }} </i></p>
 
         <p><b>Players:</b> {{ game.players }} </p>
 
@@ -29,7 +29,7 @@
 
     {% if not valid_account %}
 
-        <h4><a href="/login">Login to play</a></h4>
+        <a href="/login" class="btn btn-primary" role="button">Login to play</a>
 
     {% endif %}
 
