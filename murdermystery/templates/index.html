@@ -1,24 +1,67 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Home
+
+        Round: {{ r }}
+
+
 {% endblock %}
 
 {% block main %}
 
-    <!-- Show all the teams in nice table -->
-    {% if valid_teams > 0 %}
+    {% for info in game_info %}
 
-        <p>Teams</p>
+            <p><h3>Round: {{ r }}</h3></p>
 
-        {% for team in team_list %}
+            <p><i>{{ info.scenario|safe }}</i></p>
 
-            <p><a class="btn btn-default" onclick="window.location.href='/{{ team.url }}'">{{ team.name }}</a></p>
+            {% if info.facts != "0" %}
 
-        {% endfor %}
+                <div><h5>Fact</h5></div>
 
-    {% endif %}
+                <p>{{ info.facts|safe }}</p>
 
-    <p><a href="create-a-new-team" class="btn btn-info">Create a new team</a></p>
+            {% endif %}
+
+            {% if info.secrets != "0" %}
+
+            <p><div class="container">
+
+                <p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#secret">Reveal secret</button></p>
+                <div id="secret" class="collapse">
+                    <p>{{ info.secrets|safe }} </p>
+                </div>
+
+            </div></p>
+            {% endif %}
+
+            {% if info.clue != 0 %}
+
+            <p><div class="container">
+
+                <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#clue">You found a clue!</button>
+                <div id="clue" class="collapse">
+                    <p> <img src="/static/img/sourgrapesofwrath/clues/{{ clue }}" alt="{{ clue }}"> </p>
+                </div>
+
+            </div></p>
+
+            {% endif %}
+
+            {% if r != 1 %}
+
+                <p><a href="/{{ teamname_url }}/{{ r - 1 }}"> Go back to the previous round </a></p>
+
+            {% endif %}
+
+            {% if r != max_rounds %}
+
+                <p><a href="/{{ teamname_url }}/{{ r + 1 }}"> Go to the next round</a></p>
+
+            {% endif %}
+
+            <p><a href="/{{ teamname_url }}/rules"> The Rules </a></p>
+
+    {% endfor %}
 
 {% endblock %}
