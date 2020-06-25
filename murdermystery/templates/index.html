@@ -1,67 +1,24 @@
 {% extends "layout.html" %}
 
 {% block title %}
-
-        Round: {{ r }}
-
-
+    Home
 {% endblock %}
 
 {% block main %}
 
-    {% for info in game_info %}
+    <!-- Show all the teams in nice table -->
+    {% if valid_teams > 0 %}
 
-            <p><h3>Round: {{ r }}</h3></p>
+        <p>Teams</p>
 
-            <p><i>{{ info.scenario|safe }}</i></p>
+        {% for team in team_list %}
 
-            {% if info.facts != "0" %}
+            <p><a class="btn btn-outline-secondary" onclick="window.location.href='/{{ team.url }}'">{{ team.name }}</a></p>
 
-                <div><h5>Fact</h5></div>
+        {% endfor %}
 
-                <p>{{ info.facts|safe }}</p>
+    {% endif %}
 
-            {% endif %}
-
-            {% if info.secrets != "0" %}
-
-            <p><div class="container">
-
-                <p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#secret">Reveal secret</button></p>
-                <div id="secret" class="collapse">
-                    <p>{{ info.secrets|safe }} </p>
-                </div>
-
-            </div></p>
-            {% endif %}
-
-            {% if info.clue != 0 %}
-
-            <p><div class="container">
-
-                <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#clue">You found a clue!</button>
-                <div id="clue" class="collapse">
-                    <p> <img src="/static/img/sourgrapesofwrath/clues/{{ clue }}" alt="{{ clue }}"> </p>
-                </div>
-
-            </div></p>
-
-            {% endif %}
-
-            {% if r != 1 %}
-
-                <p><a href="/{{ teamname_url }}/{{ r - 1 }}"> Go back to the previous round </a></p>
-
-            {% endif %}
-
-            {% if r != max_rounds %}
-
-                <p><a href="/{{ teamname_url }}/{{ r + 1 }}"> Go to the next round</a></p>
-
-            {% endif %}
-
-            <p><a href="/{{ teamname_url }}/rules"> The Rules </a></p>
-
-    {% endfor %}
+    <p><a href="create-a-new-team" class="btn btn-info">Create a new team</a></p>
 
 {% endblock %}
