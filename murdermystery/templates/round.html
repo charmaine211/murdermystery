@@ -11,56 +11,68 @@
 
     {% for info in game_info %}
 
-            <p><h3>Round: {{ r }}</h3></p>
+        <p><h3>Round: {{ r }}</h3></p>
 
-            <p><i>{{ info.scenario|safe }}</i></p>
+        <div class= "grid-container">
+            <div class = "round">
 
-            {% if info.facts != "0" %}
+                <div class = "header">
+                    <p><i>{{ info.scenario|safe }}</i></p>
 
-                <div><h5>Fact</h5></div>
+                </div>
+                <div class = "main">
+                    {% if info.facts != "0" %}
 
-                <p>{{ info.facts|safe }}</p>
+                        <div><h5>Fact</h5></div>
 
-            {% endif %}
+                        <p>{{ info.facts|safe }}</p>
 
-            {% if info.secrets != "0" %}
+                    {% endif %}
 
-            <p><div class="container">
+                    {% if info.secrets != "0" %}
 
-                <p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#secret">Reveal secret</button></p>
-                <div id="secret" class="collapse">
-                    <p>{{ info.secrets|safe }} </p>
+                    <p><div class="container">
+
+                        <p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#secret">Reveal secret</button></p>
+                        <div id="secret" class="collapse">
+                            <p>{{ info.secrets|safe }} </p>
+                        </div>
+
+                    </div></p>
+                    {% endif %}
+
+                    {% if info.clue != 0 %}
+
+                    <div class="container">
+
+                        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#clue">You found a clue!</button>
+                        <div id="clue" class="collapse">
+                            <p> <img src="/static/img/sourgrapesofwrath/clues/{{ clue }}" alt="{{ clue }}"> </p>
+                        </div>
+
+                    </div>
                 </div>
 
-            </div></p>
-            {% endif %}
+                {% endif %}
+                <div class = "footer">
 
-            {% if info.clue != 0 %}
+                    <p><a href="/{{ teamname_url }}" class="btn btn-info">{{ teamname }}</a></p>
+                    <p><a href="/{{ teamname_url }}/rules" class="btn btn-info"> The Rules </a></p>
 
-            <p><div class="container">
+                    {% if r != 1 %}
 
-                <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#clue">You found a clue!</button>
-                <div id="clue" class="collapse">
-                    <p> <img src="/static/img/sourgrapesofwrath/clues/{{ clue }}" alt="{{ clue }}"> </p>
+                        <p><a href="/{{ teamname_url }}/{{ r - 1 }}"> Go back to the previous round </a></p>
+
+                    {% endif %}
+
+                    {% if r != max_rounds %}
+
+                        <p><a href="/{{ teamname_url }}/{{ r + 1 }}"> Go to the next round</a></p>
+
+                    {% endif %}
                 </div>
-
-            </div></p>
-
-            {% endif %}
-
-            {% if r != 1 %}
-
-                <p><a href="/{{ teamname_url }}/{{ r - 1 }}"> Go back to the previous round </a></p>
-
-            {% endif %}
-
-            {% if r != max_rounds %}
-
-                <p><a href="/{{ teamname_url }}/{{ r + 1 }}"> Go to the next round</a></p>
-
-            {% endif %}
-
-            <p><a href="/{{ teamname_url }}/rules"> The Rules </a></p>
+            </div>
+        </div>
 
     {% endfor %}
 
