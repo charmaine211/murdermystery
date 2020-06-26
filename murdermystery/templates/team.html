@@ -12,7 +12,7 @@
 
     {% if invite %}
 
-        <a href="/{{ teamname_url }}/invite">Invite your friends!</a>
+        <a href="/{{ teamname_url }}/invite" class="btn btn-info">Invite your friends!</a>
 
     {% else %}
 
@@ -25,11 +25,11 @@
 
             {% if host %}
 
-                <p><a href="/{{ teamname_url }}/choose-characters">Assign everyone a character!</a></p>
+                <a href="/{{ teamname_url }}/choose-characters" class="btn btn-info">Assign characters</a>
 
             {% else %}
 
-               <p>Ask your host to assign the characters.</p>
+               <p><i>Ask your host to assign the characters.</i></p>
 
             {% endif %}
 
@@ -39,9 +39,11 @@
 
                 <div class="grid-item">
 
-                    <p><a href="/{{ teamname_url }}/rules" class="btn btn-info">The Rules</a></p>
+                    <h5> Gamename </h5>
 
-                    <p><i>Beware not to spoil it for yourself!</i>
+                    <a href="/{{ teamname_url }}/rules" class="btn btn-info">The Rules</a>
+
+
                     <div class="dropdown">
                         <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Rounds
                         <span class="caret"></span></button>
@@ -53,7 +55,9 @@
 
                             {% endfor %}
                         </ul>
-                    </div></p>
+                    </div>
+
+                    <i>Beware not to spoil it for yourself!</i>
 
                 </div>
 
