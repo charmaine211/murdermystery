@@ -435,7 +435,7 @@ def round(teamname_url, r):
         grid = "col-sm-" + str(grid_size)
 
         # Return the round template that is dynamically created
-        return render_template("round.html", r = r, game_info = game_info, teamname_url = teamname_url, max_rounds = max_r, clue = clue, grid = grid)
+        return render_template("round.html", r = r, game_info = game_info, teamname_url = teamname_url, max_rounds = max_r, clue = clue, grid = grid, teamname = deslogify(teamname_url))
 
 
 @app.route("/<teamname_url>/rules")
