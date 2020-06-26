@@ -8,24 +8,32 @@
 
     <p><h3>Games</h3></p>
 
-    {% for game in games %}
+    <div class="flex-container">
+        {% for game in games %}
 
-        {% if valid_account %}
+            <div>
 
-            <a class="btn btn-default" onclick="window.location.href='/{{ game.name|lower()|replace(' ', '-') }}'">{{ game.name }}</a>
-        {% else %}
+                {% if valid_account %}
 
-            <b >{{ game.name }}</b>
+                    <a class="btn btn-default" onclick="window.location.href='/{{ game.name|lower()|replace(' ', '-') }}'"><b>{{ game.name }}</b></a>
 
-        {% endif %}
+                {% else %}
 
-        <p><h6><b>The Scenario</b></h6>
+                    <b >{{ game.name }}</b>
 
-        <i>{{ game.description }} </i></p>
+                {% endif %}
 
-        <p><b>Players:</b> {{ game.players }} </p>
+                <p><h6><b>The Scenario</b></h6>
 
-    {% endfor %}
+                <i>{{ game.description }} </i></p>
+
+                <p><b>Players:</b> {{ game.players }} </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
 
     {% if not valid_account %}
 
