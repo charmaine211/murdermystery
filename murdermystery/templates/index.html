@@ -9,16 +9,23 @@
     <!-- Show all the teams in nice table -->
     {% if valid_teams > 0 %}
 
-        <p>Teams</p>
+        <h3>Teams</h3>
 
-        {% for team in team_list %}
+        <div class="grid-container">
+            <div class="grid-item">
 
-            <p><a class="btn btn-outline-secondary" onclick="window.location.href='/{{ team.url }}'">{{ team.name }}</a></p>
+                {% for team in team_list %}
 
-        {% endfor %}
+                    <p><a class="btn btn-outline-secondary" onclick="window.location.href='/{{ team.url }}'">{{ team.name }}</a></p>
+
+                {% endfor %}
+            </div>
+        </div>
 
     {% endif %}
+    <div class="grid-item">
+        <p><i>Play another game</i></p>
 
-    <p><a href="create-a-new-team" class="btn btn-info">Create a new team</a></p>
-
+        </p><a href="create-a-new-team" class="btn btn-info">Create a new team</a></p>
+    </div>
 {% endblock %}
