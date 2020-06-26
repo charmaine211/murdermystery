@@ -1,34 +1,34 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Game
+    {{ game_info.name }}
 {% endblock %}
 
 {% block main %}
 
-    <h4>{{ game_info.name }}</h4>
+    <h3>{{ game_info.name }}</h3>
 
     <p>
-        <h5><b>The scenario</b></h5>
+        <h5>The scenario</h5>
 
-        {{ game_info.description }}
+        <i>{{ game_info.description }}</i>
 
     </p>
 
     <p>
-        <h5><b>The characters</b></h5></p>
+        <h5>The characters</h5></p>
 
         {% for character in characters%}
 
             <p>
-                <h6>{{ character.name }}</h6>
+                <p><b>{{ character.name }}</b></p>
 
                 {{ character.description }}
             </p>
 
         {% endfor %}
 
-        <p>Which of these people has a secret worth killing for?
+        <p><i>Which of these people has a secret worth killing for?</i></p>
     </p>
 
 {% endblock %}
