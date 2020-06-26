@@ -1,29 +1,28 @@
-nav .navbar-brand
-{
+nav {
+    font: "Montserrat";
+}
+
+nav .navbar-brand {
     /* size for brand */
     font-size: xx-large;
 }
 
 /* colors for brand */
-nav .navbar-brand .blue
-{
+nav .navbar-brand .blue {
     color: #537fbe;
 }
-nav .navbar-brand .red
-{
+
+nav .navbar-brand .red {
     color: #ea433b;
 }
-nav .navbar-brand .yellow
-{
+nav .navbar-brand .yellow {
     color: #f5b82e;
 }
-nav .navbar-brand .green
-{
+nav .navbar-brand .green {
     color: #2e944b;
 }
 
-main .form-control
-{
+main .form-control {
     /* center form controls */
     display: inline-block;
 
@@ -35,14 +34,13 @@ main
 {
     /* scroll horizontally as needed */
     overflow-x: auto;
+    font-family: 'Montserrat';
 
     /* center contents */
     text-align: center;
-    font-family: 'Montserrat';
 }
 
-main img
-{
+main img {
     /* constrain images on small screens */
     max-width: 100%;
 }
@@ -61,41 +59,99 @@ a {
 
 /* mouse over link */
 a:hover {
-  color: grey;
-  text-decoration: none;
+    text-decoration: none;
+
+    /* Knife cursor source: http://www.cursors-4u.com/cursor/2011/11/29/knife-7.html */
+    cursor: url(https://cur.cursors-4u.net/others/oth-8/oth702.cur), auto !important;
+}
+
+button {
+    margin: 1%;
+}
+
+
+button:hover {
+    /* Knife cursor source: http://www.cursors-4u.com/cursor/2011/11/29/knife-7.html */
+    cursor: url(https://cur.cursors-4u.net/others/oth-8/oth702.cur), auto !important;
+}
+
+main a:hover {
+    font-size: 101%;
+}
+
+h3{
+    margin: 5%;
 }
 
 /* Flexbox */
 
 .flex-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: row;
+    min-width: 25%
 }
 
 .flex-container > div {
-  background-color: #f1f1f1;
-  height: 20%;
-  width: 50%;
-  margin: 1%;
-  padding-bottom: 5%;
-  padding-top: 5%;
-  padding-left: 5%;
-  padding-right: 5%;
+    background-color: #f1f1f1;
+    height: 20%;
+    width: 100%;
+    margin: 1%;
+    padding: 2%;
 }
 
-/* Grid */
+/* GRID TEAM */
+
+@media (max-width: 700px) {
+    .grid-container {
+
+        grid-template-columns: auto auto;
+        padding: 10px;
+  }
+}
+
 
 .grid-container {
-  display: grid;
-  grid-template-columns: 25% 75%;
-  /* background-color: ;*/
-  padding: 10px;
+
+    grid-template-columns: 25% 75%;
+    /* background-color: grey; */
+    /* padding: 10px; */
 }
+
 .grid-item {
-  /*background-color: rgba(255, 255, 255, 0.8);*/
-  /*border: 1px solid rgba(0, 0, 0, 0.8);*/
-  padding: 20px;
-  /*text-align: center;*/
+    background-color: grey;
+    /*border: 1px solid rgba(0, 0, 0, 0.8);*/
+    padding: 3%;
+    margin: 10px;
+    /*text-align: center;*/
+}
+
+/* GRID ROUND*/
+
+.main {
+    grid-area: main;
+}
+
+.links {
+    grid-area: links;
+}
+
+.footer {
+    grid-area: footer;
+}
+
+.header{
+    grid-area: header;
+}
+
+.grid-container .round{
+  display: grid;
+  grid-template-areas:
+    'header header header header header header'
+    'links main main main main main'
+    'footer footer footer footer footer footer';
+  grid-gap: 10px;
+  background-color: white;
+  padding: 1%;
 }
