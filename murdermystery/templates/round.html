@@ -13,17 +13,16 @@
 
         <p><h3>Round: {{ r }}</h3></p>
 
-        <div class= "grid-container">
-            <div class = "round">
 
-                <div class = "header">
+        <div class = "round">
+
+                <div class = "main">
+
                     <p><i>{{ info.scenario|safe }}</i></p>
 
-                </div>
-                <div class = "main">
                     {% if info.facts != "0" %}
 
-                        <div><h5>Fact</h5></div>
+                        <h5>Fact</h5>
 
                         <p>{{ info.facts|safe }}</p>
 
@@ -31,48 +30,46 @@
 
                     {% if info.secrets != "0" %}
 
-                    <p><div class="container">
-
-                        <p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#secret">Reveal secret</button></p>
+                        <p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#secret">Reveal secret</button>
                         <div id="secret" class="collapse">
-                            <p>{{ info.secrets|safe }} </p>
-                        </div>
+                            <p>{{ info.secrets|safe }} </p></div>
+                        </p>
 
-                    </div></p>
                     {% endif %}
 
                     {% if info.clue != 0 %}
 
-                    <div class="container">
-
-                        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#clue">You found a clue!</button>
+                        <p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#clue">You found a clue!</button>
                         <div id="clue" class="collapse">
                             <p> <img src="/static/img/sourgrapesofwrath/clues/{{ clue }}" alt="{{ clue }}"> </p>
-                        </div>
+                        </div></p>
 
-                    </div>
+                    {% endif %}
+
                 </div>
 
-                {% endif %}
-                <div class = "footer">
+            <footer>
 
-                    <p><a href="/{{ teamname_url }}" class="btn btn-info">{{ teamname }}</a></p>
-                    <p><a href="/{{ teamname_url }}/rules" class="btn btn-info"> The Rules </a></p>
-
+                <p><a href="/{{ teamname_url }}">{{ teamname }}</a></p>
+                <p><a href="/{{ teamname_url }}/rules"> The Rules </a></p>
+                <div class = "navigation">
                     {% if r != 1 %}
 
-                        <p><a href="/{{ teamname_url }}/{{ r - 1 }}"> Go back to the previous round </a></p>
+                        <a href="/{{ teamname_url }}/{{ r - 1 }}" class="previous"> &laquo; Previous round </a>
 
                     {% endif %}
 
                     {% if r != max_rounds %}
 
-                        <p><a href="/{{ teamname_url }}/{{ r + 1 }}"> Go to the next round</a></p>
+                        <a href="/{{ teamname_url }}/{{ r + 1 }}" class="next"> Next round &raquo</a>
 
                     {% endif %}
                 </div>
-            </div>
+
+            </footer>
+
         </div>
+
 
     {% endfor %}
 
