@@ -45,6 +45,10 @@ main img {
     max-width: 100%;
 }
 
+main a:hover {
+    font-size: 101%;
+}
+
 table {
     margin: 30px;
 }
@@ -75,13 +79,20 @@ button:hover {
     cursor: url(https://cur.cursors-4u.net/others/oth-8/oth702.cur), auto !important;
 }
 
-main a:hover {
-    font-size: 101%;
-}
-
 h3{
     margin: 5%;
 }
+
+
+.btn:hover {
+    /* Knife cursor source: http://www.cursors-4u.com/cursor/2011/11/29/knife-7.html */
+    cursor: url(https://cur.cursors-4u.net/others/oth-8/oth702.cur), auto !important;
+}
+
+.option{
+    padding:2%;
+}
+
 
 /* Flexbox */
 
@@ -90,7 +101,8 @@ h3{
     flex-wrap: wrap;
     justify-content: center;
     flex-direction: row;
-    min-width: 25%
+    min-width: 25%;
+    padding: 5%;
 }
 
 .flex-container > div {
@@ -100,6 +112,7 @@ h3{
     margin: 1%;
     padding: 2%;
 }
+
 
 /* GRID TEAM */
 
@@ -127,7 +140,8 @@ h3{
     /*text-align: center;*/
 }
 
-/* GRID ROUND*/
+
+/* GRID ROUND */
 
 .main {
     grid-area: main;
@@ -154,4 +168,50 @@ h3{
   grid-gap: 10px;
   background-color: white;
   padding: 1%;
+}
+
+
+/* ROUND */
+
+footer {
+  position: static;
+  width: 100%;
+  height: 25%;
+  right: 0;
+  bottom: 0%;
+  left: 0;
+  top:75%;
+  color: #FFD740;
+  background-color: #424242;
+  clear: both;
+  margin: 0;
+  padding: 1%;
+}
+
+.round .previous:hover {
+    background-color: #ddd;
+    color: black;
+    font-size: 100%;
+}
+
+.round .next:hover {
+    background-color: #ddd;
+    color: black;
+    font-size: 100%;
+}
+
+.round .previous {
+    background-color: #f1f1f1;
+    color: black;
+    padding: 8px 16px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.round .next {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    display: inline-block;
 }
