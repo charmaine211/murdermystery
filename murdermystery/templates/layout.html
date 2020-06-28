@@ -33,37 +33,59 @@
     <body>
         <nav class="navbar navbar-expand-md navbar-light bg-light border">
             <a class="navbar-brand" href="/"><span class="black">A Magical Item</span></a>
+
             <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbar">
+
                 <ul class="navbar-nav mr-auto mt-2">
+
                     <li class="nav-item"><a class="nav-link" href="/games">Games</a></li>
                 </ul>
+
                 {% if session.user_id %}
+
                     <ul class="navbar-nav ml-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
                     </ul>
+
                 {% else %}
+
                     <ul class="navbar-nav ml-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
                         <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
                     </ul>
+
                 {% endif %}
+
             </div>
+
         </nav>
 
         {% if get_flashed_messages() %}
+
             <header>
+
                 <div class="alert alert-primary border text-center" role="alert">
                     {{ get_flashed_messages() | join(" ") }}
                 </div>
+
             </header>
+
         {% endif %}
 
-        <main class="container p-5">
+        <main class="container  p-1">
             {% block main %}{% endblock %}
         </main>
+
+        <footer>
+
+            {% block footer %}{% endblock %}
+
+        </footer>
+
     </body>
 
 </html>
