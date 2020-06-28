@@ -6,28 +6,35 @@
 
 {% block main %}
 
-    <p><h3>Games</h3></p>
+    <h3>Games</h3>
 
-    <div class="flex-container">
+    {% if not valid_account %}
+
+        <a href="/login" class="btn btn-info" role="button">Login to play</a>
+
+    {% endif %}
+
+    <div class="grid-container">
+
         {% for game in games %}
 
-            <div>
+            <div class = "grid-item">
 
                 {% if valid_account %}
 
-                    <a class="btn btn-default" onclick="window.location.href='/{{ game.name|lower()|replace(' ', '-') }}'"><b>{{ game.name }}</b></a>
+                    <a href="/{{ game.name|lower()|replace(' ', '-') }}"><h5>{{ game.name }}</h5></a>
 
                 {% else %}
 
-                    <b >{{ game.name }}</b>
+                    <h>{{ game.name }}</h5>
 
                 {% endif %}
 
-                <p><h6><b>The Scenario</b></h6>
+                <p><b>The Scenario</b></p>
 
-                <i>{{ game.description }} </i></p>
+                <p><i>{{ game.description }} </i></p>
 
-                <p><b>Players:</b> {{ game.players }} </p>
+                <p>Players: {{ game.players }} </p>
 
             </div>
 
@@ -35,10 +42,10 @@
 
     </div>
 
-    {% if not valid_account %}
+{% endblock %}
 
-        <a href="/login" class="btn btn-primary" role="button">Login to play</a>
+{% block footer %}
 
-    {% endif %}
+    <a href="create-a-new-team" class="btn btn-info">Create a new team</a>
 
 {% endblock %}
