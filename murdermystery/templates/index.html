@@ -11,21 +11,20 @@
 
         <h3>Teams</h3>
 
-        <div class="grid-container">
-            <div class="grid-item">
+        {% for team in team_list %}
 
-                {% for team in team_list %}
+            <p><a class="btn btn-outline-secondary" onclick="window.location.href='/{{ team.url }}'">{{ team.name }}</a></p>
 
-                    <p><a class="btn btn-outline-secondary" onclick="window.location.href='/{{ team.url }}'">{{ team.name }}</a></p>
+        {% endfor %}
 
-                {% endfor %}
-            </div>
-        </div>
+
 
     {% endif %}
-    <div class="grid-item">
-        <p><i>Play another game</i></p>
 
-        </p><a href="create-a-new-team" class="btn btn-info">Create a new team</a></p>
+    <hr>
+
+    <p><a href="create-a-new-team" class="btn btn-info">Create a new team</a></p>
+
+
     </div>
 {% endblock %}
