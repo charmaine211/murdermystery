@@ -8,27 +8,43 @@
 
     <h3>{{ game_info.name }}</h3>
 
-    <p>
-        <h5>The scenario</h5>
+    <p><h5>The Scenario</h5></p>
 
-        <i>{{ game_info.description }}</i>
+    <i>{{ game_info.description }}</i>
 
-    </p>
+    <div class = "grid-container">
 
-    <p>
-        <h5>The characters</h5></p>
+        <div class="grid-item">
 
-        {% for character in characters%}
+            <div class = "characters">
 
-            <p>
-                <p><b>{{ character.name }}</b></p>
+                <p><h5>The Characters</h5></p>
 
-                {{ character.description }}
-            </p>
+                <p><i>Which of these people has a secret worth killing for?</i></p>
 
-        {% endfor %}
+                <div class="grid-container">
 
-        <p><i>Which of these people has a secret worth killing for?</i></p>
-    </p>
+                    {% for character in characters%}
+
+                        <div class="grid-item">
+
+                                <p>
+
+                                    <p><b>{{ character.name }}</b></p>
+
+                                    {{ character.description }}
+
+                                </p>
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 {% endblock %}
