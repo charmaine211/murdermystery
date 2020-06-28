@@ -8,21 +8,18 @@
 
     <form action="/{{ teamname_url }}/invite" method="post" onsubmit ="return invite();">
 
-        <h3> Invite your friends! </h3>
-
         {% for player in range(1, players) %}
 
             {{ "Friend " ~ player }}
 
             <!-- Show text, depending on selected game-->
-        
             <div class="form-group">
                 <input class="form-control" name={{ "username" ~ player }} placeholder = {{ "Username " ~ player }} id = {{ "username" ~ player }} type="text" maxlength="15">
             </div>
 
         {% endfor %}
 
-        <button class="btn btn-primary" type="submit">Invite</button>
+        <button class="btn btn-info" type="submit">Invite</button>
 
     </form>
 
