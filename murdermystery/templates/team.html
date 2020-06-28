@@ -35,50 +35,60 @@
 
         {% else %}
 
+
+
+
+
+                <h5> Gamename </h5>
+
+                <p><a href="/{{ teamname_url }}/rules" class="btn btn-info">The Rules</a></p>
+
+
+                <p><div class="dropdown">
+
+                    <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Rounds
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+
+                        {% for round in range(max_rounds) %}
+
+                            <li><a href="/{{ teamname_url }}/{{ round + 1 }}" class = "option">Round {{ round + 1 }}</a></li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div></p>
+
+                <i>Beware not to spoil it for yourself!</i>
+
+
             <div class="grid-container">
 
                 <div class="grid-item">
 
-                    <h5> Gamename </h5>
+                <h5> The potential killers </h5>
 
-                    <a href="/{{ teamname_url }}/rules" class="btn btn-info">The Rules</a>
+                <div class = "characters">
 
-
-                    <div class="dropdown">
-                        <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Rounds
-                        <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-
-                            {% for round in range(max_rounds) %}
-
-                                <li><a href="/{{ teamname_url }}/{{ round + 1 }}" class = "option">Round {{ round + 1 }}</a></li>
-
-                            {% endfor %}
-                        </ul>
-                    </div>
-
-                    <i>Beware not to spoil it for yourself!</i>
-
-                </div>
-
-                <div class="grid-item">
-                    <h5> The potential killers </h5>
-
-                    <div class="flex-container">
+                    <div class="grid-container">
 
                             {% for player in team %}
 
-                                <div>
+                                <div class = "grid-item">
+
                                     <b><p>{{ player.username}}</p></b>
 
                                     <p>{{ player.name }}</p>
 
                                     <p>{{ player.description }}</p>
+
                                 </div>
 
                             {% endfor %}
 
                     </div>
+
                 </div>
             </div>
         {% endif %}
