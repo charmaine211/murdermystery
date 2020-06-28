@@ -7,70 +7,76 @@
 
 {% endblock %}
 
+
 {% block main %}
 
-    {% for info in game_info %}
+    <div class = "round">
 
-        <p><h3>Round: {{ r }}</h3></p>
+        {% for info in game_info %}
+
+            <p><h3>Round: {{ r }}</h3></p>
+
+            <p><i>{{ info.scenario|safe }}</i></p>
+
+            <hr>
+
+            {% if info.facts != "0" %}
+
+                <h5>Fact</h5>
+
+                <p>{{ info.facts|safe }}</p>
+
+            {% endif %}
+
+            {% if info.secrets != "0" %}
+
+                <p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#secret">Reveal secret</button>
+                <div id="secret" class="collapse">
+                    <p>{{ info.secrets|safe }} </p></div>
+                </p>
+
+            {% endif %}
+
+            {% if info.clue != 0 %}
+
+                <p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#clue">You found a clue!</button>
+                <div id="clue" class="collapse">
+                    <p><img src="/static/img/{{ gamename }}/clues/{{ clue }}" alt="{{ clue }}"></p>
+                </div></p>
+
+            {% endif %}
 
 
-        <div class = "round">
+        {% endfor %}
 
-                <div class = "main">
+        <div class = "navigation">
 
-                    <p><i>{{ info.scenario|safe }}</i></p>
+            {% if r != 1 %}
 
-                    {% if info.facts != "0" %}
+                <a href="/{{ teamname_url }}/{{ r - 1 }}" class="previous"> &laquo; Previous round </a>
 
-                        <h5>Fact</h5>
+            {% endif %}
 
-                        <p>{{ info.facts|safe }}</p>
+            {% if r != max_rounds %}
 
-                    {% endif %}
+                <a href="/{{ teamname_url }}/{{ r + 1 }}" class="next"> Next round &raquo</a>
 
-                    {% if info.secrets != "0" %}
-
-                        <p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#secret">Reveal secret</button>
-                        <div id="secret" class="collapse">
-                            <p>{{ info.secrets|safe }} </p></div>
-                        </p>
-
-                    {% endif %}
-
-                    {% if info.clue != 0 %}
-
-                        <p><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#clue">You found a clue!</button>
-                        <div id="clue" class="collapse">
-                            <p> <img src="/static/img/sourgrapesofwrath/clues/{{ clue }}" alt="{{ clue }}"> </p>
-                        </div></p>
-
-                    {% endif %}
-
-                </div>
-
-            <footer>
-
-                <p><a href="/{{ teamname_url }}">{{ teamname }}</a></p>
-                <p><a href="/{{ teamname_url }}/rules"> The Rules </a></p>
-                <div class = "navigation">
-                    {% if r != 1 %}
-
-                        <a href="/{{ teamname_url }}/{{ r - 1 }}" class="previous"> &laquo; Previous round </a>
-
-                    {% endif %}
-
-                    {% if r != max_rounds %}
-
-                        <a href="/{{ teamname_url }}/{{ r + 1 }}" class="next"> Next round &raquo</a>
-
-                    {% endif %}
-                </div>
-
-            </footer>
+            {% endif %}
 
         </div>
 
+    </div>
 
-    {% endfor %}
+{% endblock %}
+
+{% block footer %}
+
+    <div class = "round">
+
+        <p><a href="/{{ teamname_url }}">{{ teamname }}</a></p>
+
+        <p><a href="/{{ teamname_url }}/rules"> The Rules </a></p>
+
+    </div>
 
 {% endblock %}
