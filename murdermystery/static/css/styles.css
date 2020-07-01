@@ -108,12 +108,19 @@ h5{
     padding:2%;
 }
 
+
 body {
      display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
 
+
+hr {
+
+    margin: 4%;
+
+}
 
 
 footer {
