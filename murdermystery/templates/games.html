@@ -44,8 +44,14 @@
 
 {% endblock %}
 
+
+
 {% block footer %}
 
-    <a href="create-a-new-team" class="btn btn-info">Create a new team</a>
+    {% if valid_account %}
+
+        <a href="create-a-new-team" class="btn btn-info">Create a new team</a>
+
+    {% endif %}
 
 {% endblock %}
