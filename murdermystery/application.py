@@ -107,8 +107,13 @@ def game_or_team(game_or_team):
 
                 team.append(player)
 
+        game_id = db.execute("SELECT game_id FROM teams WHERE name = :teamname_url", teamname_url = teamname_url)[0]["game_id"]
+
+        game_info = db.execute("SELECT name, description FROM games WHERE id = :game_id", game_id = game_id)[0]
+
+
         # Return the HTML with all the info that's available for the team
-        return render_template("team.html", teamname = name, host = validate_teamhost(user_id, teamname_url), invite = send_invite(teamname_url), teamname_url = teamname_url, team = team, max_rounds = max_rounds(teamname_url))
+        return render_template("team.html", teamname = name, host = validate_teamhost(user_id, teamname_url), invite = send_invite(teamname_url), teamname_url = teamname_url, team = team, max_rounds = max_rounds(teamname_url), game_info = game_info)
 
     # Is it a game?
     game_info = db.execute("SELECT * FROM games WHERE name = :name", name = name)
