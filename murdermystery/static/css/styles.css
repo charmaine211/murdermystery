@@ -42,7 +42,8 @@ main
 }
 
 main img {
-    min-width: 100%;
+    /* constrain images on small screens */
+    max-width: 100%;
 }
 
 main a:hover {
