@@ -35,32 +35,30 @@
 
         {% else %}
 
+            <h5> {{ game_info.name }} </h5>
+
+            <p> {{ game_info.description }} </p>
+
+            <p><a href="/{{ teamname_url }}/rules" class="btn btn-info">The Rules</a></p>
 
 
+            <p><div class="dropdown">
 
+                <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Rounds
+                <span class="caret"></span></button>
+                <ul class="dropdown-menu">
 
-                <h5> Gamename </h5>
+                    {% for round in range(max_rounds) %}
 
-                <p><a href="/{{ teamname_url }}/rules" class="btn btn-info">The Rules</a></p>
+                        <li><a href="/{{ teamname_url }}/{{ round + 1 }}" class = "option">Round {{ round + 1 }}</a></li>
 
+                    {% endfor %}
 
-                <p><div class="dropdown">
+                </ul>
 
-                    <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Rounds
-                    <span class="caret"></span></button>
-                    <ul class="dropdown-menu">
+            </div></p>
 
-                        {% for round in range(max_rounds) %}
-
-                            <li><a href="/{{ teamname_url }}/{{ round + 1 }}" class = "option">Round {{ round + 1 }}</a></li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </div></p>
-
-                <i>Beware not to spoil it for yourself!</i>
+            <i>Beware not to spoil it for yourself!</i>
 
 
             <div class="grid-container">
