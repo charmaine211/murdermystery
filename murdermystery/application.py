@@ -413,6 +413,8 @@ def round(teamname_url, r):
 
         game_name = db.execute("SELECT name FROM games WHERE id = :game_id", game_id = game_id)[0]["name"]
 
+        game_name_url = slogify(game_name)
+
         game_table = game_name.lower().replace(" ","")
 
         max_r = max_rounds(teamname_url)
@@ -440,7 +442,7 @@ def round(teamname_url, r):
         grid = "col-sm-" + str(grid_size)
 
         # Return the round template that is dynamically created
-        return render_template("round.html", r = r, game_info = game_info, teamname_url = teamname_url, max_rounds = max_r, clue = clue, grid = grid, teamname = deslogify(teamname_url))
+        return render_template("round.html", r = r, game_info = game_info, teamname_url = teamname_url, max_rounds = max_r, clue = clue, grid = grid, teamname = deslogify(teamname_url), game_name_url = game_name_url)
 
 
 @app.route("/<teamname_url>/rules")
